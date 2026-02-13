@@ -1,4 +1,4 @@
-# PROJECT CONCEPT — Untitled Platformer/Combat Game
+# PROJECT CODENAME — BRIEFCASE
 
 ## OVERVIEW
 
@@ -25,7 +25,7 @@ A dark, atmospheric platformer inspired by _Hollow Knight_ — blending fluid co
 
 - **Double Jump:** Regain midair control, visually expressed as a pulse of spiritual energy.
 - **Dash:**
-  - Ground dash transitions into a roll if it hits terrain.
+  - Ground dash acts as a sprint (HK:SS Swiftstep)
   - Aerial dash has diminishing momentum, making timing key.
 - **Wall Cling:**
   - Slowly slide down walls.
@@ -34,7 +34,8 @@ A dark, atmospheric platformer inspired by _Hollow Knight_ — blending fluid co
 
 ### Combat
 
-- **Precision Strikes:** Fast melee combat, with short recovery windows (think Hollow Knight’s nail + Sekiro rhythm).
+- **Melee Precision Strikes:** Fast melee combat, with short recovery windows (think Hollow Knight’s nail + Sekiro rhythm).
+- **Projectile Segments:** Aimable fast paced and deadly, 1 shot 1 kill - but the enemies have the same rules (limited ammo so as to not overshadow melee).
 - **Execution Attacks:** Only triggered when enemy morale breaks — cinematic and rewarding but costly to your own compliance meter (punishment for enjoying violence).
 
 ---
@@ -110,7 +111,7 @@ A dark, atmospheric platformer inspired by _Hollow Knight_ — blending fluid co
 - _Papers, Please_ — bureaucratic oppression.
 - _Rain World_ — survival and inevitability.
 - _Control_ — surreal bureaucracy and liminality.
-- _Blasphemous_ — ritualistic decay.
+- _Hollow Knight: Silksong_ — dying world themes.
 
 ---
 

@@ -1,0 +1,83 @@
+body {
+  background-color: #010917ff;
+  margin: 0;
+  overflow: hidden;
+  font-family:
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+section.container {
+  width: 100vw;
+  height: 100vh;
+}
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(24, 21, 47);
+}
+div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+section#main {
+  width: 50vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0c1023ff 0%, #1b2a45ff 100%);
+  gap: 48px;
+}
+div.button-box {
+  display: flex;
+  gap: 16px;
+  flex-direction: column;
+  min-width: 240px;
+  align-items: center;
+}
+img {
+  max-width: 400px;
+  height: auto;
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
+  display: block;
+  margin: 0 auto;
+}
+button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  padding: 12px 24px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+button:active {
+  transform: translateY(0);
+}
+#startButton {
+  background: linear-gradient(45deg, #4f46e5, #7c3aed);
+  border: none;
+}
+#startButton:hover {
+  background: linear-gradient(45deg, #4338ca, #6d28d9);
+}

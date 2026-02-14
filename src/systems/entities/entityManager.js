@@ -1,12 +1,10 @@
 export default class EntityManager {
-  constructor(gameManager, PlayerClass) {
+  constructor(gameManager) {
     this.game = gameManager;
 
     this.entities = [];
 
-    const player = new PlayerClass(this.game, 50, 50, 25, 25);
-
-    this.entities.push(player);
+    this.entities.push(this.game.player);
   }
   update() {
     this.entities.forEach((e) => e.update());

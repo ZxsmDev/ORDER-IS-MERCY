@@ -7,6 +7,9 @@ import StateManager from "./game/stateManager.js";
 import EntityManager from "./systems/entities/entityManager.js";
 import Player from "./systems/entities/player.js";
 
+// Level management
+import Level from "./systems/level/level.js";
+
 // Utility classes
 import Debug from "./utils/debug.js";
 import InputHandler from "./utils/input.js";
@@ -28,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     StateManager,
     EntityManager,
     Player,
+    Level,
   );
   gameManager.init();
 });

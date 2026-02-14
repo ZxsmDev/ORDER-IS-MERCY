@@ -42,16 +42,13 @@ export default class StateManager {
 
   update() {
     this.current?.update();
-
-    //==========================================
-    // DEBUG
-    //==========================================
-    if (this.game.input.isDown("\\")) {
-      this.game.debug.toggle();
-    }
+    this.game.input.update();
   }
   render() {
     this.game.ctx.clearRect(0, 0, this.game.width, this.game.height);
     this.current?.render();
+
+    // Draw ground
+    this.game.level.render();
   }
 }

@@ -15,6 +15,9 @@ export default class GameLoop {
 
     this.game.delta = delta;
 
+    // Handle window resize
+    this.game.resizeCanvas();
+
     this.stateManager.update();
     this.stateManager.render();
 

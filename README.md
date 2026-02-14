@@ -1,126 +1,382 @@
-# PROJECT CODENAME — BRIEFCASE
+# ORDER IS MERCY
+
+> A bleak platformer about obedience, decay, and the quiet violence of systems that never stop running.
+
+---
+
+## TABLE OF CONTENTS
+
+- [Overview](#overview)
+- [Design Pillars](#design-pillars)
+- [Core Fantasy](#core-fantasy)
+- [Core Loop](#core-loop)
+- [Player Mechanics](#player-mechanics)
+  - [Movement](#movement)
+  - [Combat](#combat)
+- [Systems & Progression](#systems--progression)
+- [World Structure](#world-structure)
+- [Narrative Structure](#narrative-structure)
+- [Endings](#endings)
+- [Visual & Audio Direction](#visual--audio-direction)
+- [Technical Architecture](#technical-architecture)
+- [Inspirations](#inspirations)
+- [Development Roadmap](#development-roadmap)
+- [Task Checklist](#task-checklist)
+- [Commit History](#commit-history)
+
+---
 
 ## OVERVIEW
 
-A dark, atmospheric platformer inspired by _Hollow Knight_ — blending fluid combat and traversal with themes of **bureaucracy, decay, and societal expectation**. The tone is melancholic and oppressive rather than heroic. The world feels like it’s running on outdated systems — both literally and metaphorically.
+**BUREAU** is a dark, atmospheric 2D platformer with precision combat and traversal, inspired by  
+_Hollow Knight_, but grounded in themes of **bureaucracy, decay, and enforced purpose**.
+
+This is not a heroic journey.  
+The world does not want saving.  
+It wants **processing**.
+
+You are not chosen.  
+You are **assigned**.
 
 ---
 
-## CORE LOOP (TBD)
+## DESIGN PILLARS
 
-**Premise:** The player explores a decaying city-state powered by an ancient system of "obligations." Every creature is bound by bureaucratic law — even death itself must be filed and approved.
+1. **Obedience Is a Mechanic**
+   - Progress is tied to compliance, not skill alone.
+   - The game tracks _how well you follow instructions_, not how moral you are.
 
-**Goal Ideas:**
+2. **Movement Is Expression**
+   - Traversal should feel fluid, fast, and empowering.
+   - Combat difficulty comes from **positioning**, not raw numbers.
 
-1. **Fulfillment System:** The player’s objective is to complete “Directives” issued by a central authority. These are essentially bureaucratic quests — collect, deliver, eliminate, report.
-   - Completing them earns temporary “compliance” — a metric of stability or worth.
-   - Eventually, the player realizes compliance fuels the city’s stagnation.
-2. **Self-Assigned Goal:** After discovering the truth, the player may choose to stop following orders — leading to disintegration or rebellion endings.
+3. **The System Outlives You**
+   - The world does not care about rebellion.
+   - Even failure is documented and archived.
+
+4. **No Clean Endings**
+   - Every ending is a loss.
+   - The only variable is **who benefits from it**.
 
 ---
 
-## MOVEMENT + COMBAT FOUNDATION
+## CORE FANTASY
+
+You are a low-ranking **clerical enforcer** operating within a city-state governed entirely by an ancient administrative machine known only as **The Bureau**.
+
+Every action requires:
+
+- Authorization
+- Documentation
+- Justification
+
+Including violence.  
+Including death.  
+Including your own.
+
+---
+
+## CORE LOOP
+
+> **Explore → Receive Directives → Execute Tasks → File Results → Adjust Compliance → World Reacts**
+
+### Directive Flow
+
+1. Receive a Directive from a Ministry terminal or NPC
+2. Carry out the task (combat, traversal, investigation)
+3. Return proof or documentation
+4. Receive rewards, penalties, or amendments
+5. World state subtly shifts
+
+### Player Tension
+
+- High compliance = easier access, colder world
+- Low compliance = resistance, instability, corruption
+  - (Low compliance essentially blocks upgrades - in an effort to encourage obedience)
+
+There is **no neutral state**.
+
+---
+
+## PLAYER MECHANICS
 
 ### Movement
 
-- **Double Jump:** Regain midair control, visually expressed as a pulse of spiritual energy.
-- **Dash:**
-  - Ground dash acts as a sprint (HK:SS Swiftstep)
-  - Aerial dash has diminishing momentum, making timing key.
-- **Wall Cling:**
-  - Slowly slide down walls.
-  - Touching a wall resets jump cooldown.
-  - Could tie into stamina or “focus” meter (to avoid infinite climb abuse).
+- **Double Jump**
+  - Midair correction framed as an “approved action”
+  - Visualized via a stamped burst of energy
 
-### Combat
+- **Dash**
+  - Ground dash behaves like a short sprint
+  - Air dash decays rapidly, forcing intentional use
+  - Down dash, and diagonal down dash for interest
+  - Combat wise, high compliance unlocks i-frame upgrade
 
-- **Melee Precision Strikes:** Fast melee combat, with short recovery windows (think Hollow Knight’s nail + Sekiro rhythm).
-- **Projectile Segments:** Aimable fast paced and deadly, 1 shot 1 kill - but the enemies have the same rules (limited ammo so as to not overshadow melee).
-- **Execution Attacks:** Only triggered when enemy morale breaks — cinematic and rewarding but costly to your own compliance meter (punishment for enjoying violence).
+- **Wall Cling**
+  - Slow descent
+  - Resets jump cooldown
+  - Limited by stamina/focus to prevent infinite climbs
+
+Movement should feel _cleaner than combat_.
 
 ---
 
-## MECHANICAL THEMES
+### Combat
 
-| Concept       | Implementation                                                                                                |
-| ------------- | ------------------------------------------------------------------------------------------------------------- |
-| Bureaucracy   | Every ability, upgrade, or map unlock requires “forms” or “permits.” These are literal in-world items.        |
-| Expectation   | NPCs and factions constantly judge your choices. Even saving someone might reduce your compliance rating.     |
-| Corruption    | The higher you climb in the system, the more the world rejects you — environments glitch, enemies mirror you. |
-| Documentation | Save points are “filing stations” where your existence is backed up as a record, not a soul.                  |
+- **Melee Combat**
+  - Fast, precise strikes
+  - Short recovery windows
+  - Enemies punish panic inputs
+
+- **Projectile Tools**
+  - High lethality, limited ammo
+  - Enemies obey the same rules
+  - Designed to complement melee, not replace it
+
+- **Execution Attacks**
+  - Triggered when enemy morale breaks
+  - Cinematic, brutal, costly
+  - Lowers compliance as punishment for excess
+    - (While high compliance is typically sought after, it can be "channeled" and lost to aid in combat)
+
+---
+
+## SYSTEMS & PROGRESSION
+
+| System           | Description                               |
+| ---------------- | ----------------------------------------- |
+| Compliance Meter | Tracks obedience to directives            |
+| Permits & Forms  | Gate abilities, areas, upgrades           |
+| Paper Clips      | Base currency (valuable due to scarcity)  |
+| Seals            | Permanent progression markers             |
+| Records          | Save system disguised as archival backups |
+
+Progression is not about growth.  
+It’s about **authorization**.
 
 ---
 
 ## WORLD STRUCTURE
 
-- **The Ministry:** The hub area. Cold, metallic, and candlelit. Each department issues missions to maintain control over the “Outer Sectors.”
-- **Outer Sectors:** The decayed remains of old bureaucratic projects. Think ruined offices, fungus-choked archives, and desolate transport tunnels.
-- **Sanctums:** Optional challenge zones — ancient archives, where you can find outlawed knowledge or “unapproved emotions.”
-- **The Citadel:** The top layer of society. Pristine yet lifeless — where the protagonist’s final revelation occurs.
+### The Ministry (Hub)
+
+- Central administrative complex
+- Cold, rigid, sterile
+- Source of most Directives
+
+### Outer Sectors
+
+- Abandoned bureaucratic projects
+- Collapsed offices, overgrown archives
+- Populated by forgotten workers and malformed enforcers
+
+### Sanctums
+
+- Optional challenge zones
+- Contain outlawed knowledge
+- No Directives, no guidance
+
+### The Citadel
+
+- Final region
+- Pristine, empty, silent
+- Where the system reveals its truth
 
 ---
 
-## STORY THEMES & ARC
+## NARRATIVE STRUCTURE
 
-### Act 1 — Compliance
+### Act I — Compliance
 
-- The protagonist is a “clerical enforcer,” assigned to carry out directives.
-- Every task seems justifiable but hollow.
-- The city praises obedience; noncompliance leads to deletion.
+- You follow orders
+- The system rewards efficiency
+- The world feels stable but lifeless
 
-### Act 2 — Realization
+### Act II — Realization
 
-- You uncover that the Ministry no longer has a true ruler — directives perpetuate themselves automatically.
-- NPCs begin to repeat their phrases, suggesting systemic breakdown.
+- Directives contradict themselves
+- NPC dialogue loops and degrades
+- You discover there is no ruling authority
 
-### Act 3 — Collapse
+### Act III — Collapse
 
-- The player must choose:
-  - **Continue Serving:** Maintain the system and live as part of it.
-  - **Reject Orders:** The world begins to erase itself — your file is deleted.
-  - **Overwrite Directives:** You become the new authority — but the world stays broken, only now under your name.
-
-**Bad Ending Options:**
-
-1. **Existential Bureaucracy:** Your rebellion is recorded as “anomaly #4,501,” filed and forgotten. The system continues without you.
-2. **False Freedom:** You escape the Ministry, only to find an infinite sea of other Ministries — all filing the same forms.
-3. **Compliance Complete:** You earn perfect obedience and are promoted into nothingness — an empty ascension.
+- The system begins correcting _you_
+- Areas destabilize
+- The game actively resists player agency
+  - Input inversion, flipped camera etc.
 
 ---
 
-## FEATURE IDEAS
+## ENDINGS
 
-### World / Systems
+1. **Compliance Complete**
+   - Perfect obedience
+   - You are promoted into irrelevance
 
-- **Directive System:** Dynamic quest system issuing tasks with absurd or contradictory objectives.
-- **Compliance Meter:** Morality system tracking how closely you follow orders vs. act freely.
-- **Ink & Seal Economy:** Collect ink to “stamp” upgrades. Seals are permanent progress tokens.
-- **Record Trees:** Instead of bonfires, ancient record terminals where souls are archived.
+2. **Anomaly Logged**
+   - Rebellion acknowledged
+   - Filed, categorized, ignored
 
-### Visual / Aesthetic
+3. **Overwrite**
+   - You assume control
+   - The system persists, now bearing your name
 
-- Stylized monochrome or muted palette with bursts of color tied to compliance level.
-- The UI should feel like an old filing form — red stamps, typed headers, scratched ink.
-- Environments built around decaying architecture — clockwork machinery, stacks of scrolls, and leaking pipes.
-
----
-
-## TONE REFERENCES
-
-- _Hollow Knight_ — environmental storytelling, tone.
-- _Papers, Please_ — bureaucratic oppression.
-- _Rain World_ — survival and inevitability.
-- _Control_ — surreal bureaucracy and liminality.
-- _Hollow Knight: Silksong_ — dying world themes.
+There is no victory state.
 
 ---
 
-## NEXT STEPS
+## VISUAL & AUDIO DIRECTION
 
-1. Define the **core loop** (how movement, combat, and compliance interact).
-2. Decide on the **ending structure** — fixed or choice-based.
-3. Establish a **prototype goal**:
-   - Example: “Reach the Upper Records Office (first major area) while maintaining 70% compliance.”
-4. Build basic movement physics and a test map to validate traversal feel.
+### Visuals
+
+- Muted palette, near-monochrome - very brown/tan and lifeless
+- Red stamps and seals as UI accents
+- Subtle world glitches tied to compliance
+
+### Audio
+
+- Mechanical ambience
+- Distant machinery
+- Music fades under heavy bureaucracy moments
+
+Silence is intentional.
 
 ---
+
+## TECHNICAL ARCHITECTURE
+
+- HTML Canvas
+- Vanilla JavaScript
+- Centralized GameManager architecture
+- Entity-based system (Player, Enemies, NPCs)
+- State-driven scene management
+
+Structure prioritizes **maintainability over speed**.
+
+---
+
+## INSPIRATIONS
+
+- _Hollow Knight_
+  - Environmental storytelling, melancholic tone, a world decaying long after its purpose has been forgotten.
+- _1984_
+  - Totalitarianism, bureaucratic control, and the weaponization of language to suppress individuality and dissent.
+- _Control_
+  - Institutional surrealism, hostile architecture, and the idea that systems persist regardless of human cost.
+- _Rain World_
+  - Survival, inevitability, and the indifference of the world to player intent.
+- _Hollow Knight: Silksong_
+  - A dying world in motion — collapse as a process, not an event.
+
+---
+
+## DEVELOPMENT ROADMAP
+
+### Phase 1 — Foundation
+
+- Core movement
+- Basic combat
+- Scene/state system
+
+### Phase 2 — Systems
+
+- Directives
+- Compliance tracking
+- Save/record system
+
+### Phase 3 — Content
+
+- World regions
+- Enemy types
+- Boss encounters
+
+### Phase 4 — Narrative & Polish
+
+- Endings
+- Environmental storytelling
+- Audio/visual refinement
+
+---
+
+## TASK CHECKLIST
+
+### Core Engine
+
+- [x] Finalize GameManager architecture
+- [ ] Implement full StateManager
+- [ ] Modularize Entity system
+- [ ] Camera system with smoothing
+- [x] Collision refinement
+
+### Player
+
+- [ ] Finalize movement tuning
+- [x] Dash decay logic
+- [ ] Wall cling stamina
+- [ ] Animation state machine
+- [ ] Hitbox / hurtbox separation
+
+### Combat
+
+- [ ] Melee combo logic
+- [ ] Parry / counter window
+- [ ] Projectile ammo system
+- [ ] Enemy morale system
+- [ ] Execution animations
+
+### Systems
+
+- [ ] Directive generator
+- [ ] Compliance meter logic
+- [ ] Permit gating
+- [ ] Ink & Seal economy
+- [ ] Save/record terminals
+
+### World
+
+- [ ] Ministry hub
+- [ ] Outer Sector tilesets
+- [ ] Sanctum challenge rooms
+- [ ] Citadel layout
+- [ ] Environmental hazards
+
+### Enemies
+
+- [ ] Basic enforcer
+- [ ] Ranged unit
+- [ ] Corrupted worker
+- [ ] Elite bureaucrat
+- [ ] Boss framework
+
+### Narrative
+
+- [ ] Directive text pool
+- [ ] NPC dialogue system
+- [ ] World-state dialogue variants
+- [ ] Ending triggers
+- [ ] Ending cutscenes
+
+### Polish
+
+- [ ] UI theming
+- [ ] Audio pass
+- [ ] Performance optimization
+- [ ] Bug fixing
+- [ ] Playtesting
+
+---
+
+## COMMIT HISTORY
+
+| #   | Commit                    | Description                                                                                      |
+| --- | ------------------------- | ------------------------------------------------------------------------------------------------ |
+| 1   | Refactoring Progress (P1) | Core architecture rebuilt: MAIN → GAMEMANAGER → GAMELOOP → STATEMANAGER → ENTITYMANAGER → PLAYER |
+| 2   | Refactoring Progress (P2) | Bug fixes, sizing logic, refined movement, early level infrastructure                            |
+
+---
+
+>- “NONCOMPLIANCE IS NEGLIGENCE.”
+>- “EVERY ACTION HAS A FILE.”
+>- “FUNCTION IS FREEDOM.”
+>- “THE SYSTEM REMEMBERS SO YOU DON’T HAVE TO.”
+>- “YOU ARE SAFE WHILE RECORDED.”

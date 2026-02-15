@@ -11,30 +11,40 @@ export default class GameManager {
     entityManager,
     PlayerClass,
     LevelClass,
+    Camera,
   ) {
+    // Canvas and Context
     this.canvas = canvas;
     this.ctx = ctx;
     this.resizeCanvas();
 
+    // Systems
     this.stateManager = new stateManager(this);
     this.gameLoop = new gameLoop(this);
 
+    // Level
+    this.level = new LevelClass(this);
+
+    // Entities
     this.player = new PlayerClass(
       this,
-      canvas.width / 2 - 12.5,
-      canvas.height / 2 - 12.5,
+      this.level.data.playerSpawn.x,
+      this.level.data.playerSpawn.y,
       25,
-      25,
+      50,
     );
     this.entityManager = new entityManager(this);
 
-    this.level = new LevelClass(this);
+    // Camera
+    this.camera = new Camera(this);
 
+    // Utils
     this.collision = collision;
     this.math = mathUtils;
     this.input = new inputManager();
     this.debug = new debug(this);
 
+    // Global properties
     this.width = canvas.width;
     this.height = canvas.height;
     this.centerX = canvas.width / 2;

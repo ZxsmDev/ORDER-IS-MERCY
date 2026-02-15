@@ -16,10 +16,18 @@ export default class StateManager {
         update: () => {
           // Update game state
           this.game.entityManager.update();
+          this.game.camera.update(this.game.ctx);
         },
         render: () => {
           // Render game state
-          this.game.entityManager.render();
+          this.game.camera.applyTransform(this.game.ctx);
+          this.game.level.renderGeometry();
+          this.game.level.renderEntities();
+          // Draw trajectory in world space before reset
+          this.game.debug.render();
+          // Reset transform for UI overlay
+          this.game.ctx.setTransform(1, 0, 0, 1, 0, 0);
+          this.game.debug.renderText();
         },
       },
       pause: {
@@ -45,10 +53,8 @@ export default class StateManager {
     this.game.input.update();
   }
   render() {
+    this.game.ctx.setTransform(1, 0, 0, 1, 0, 0); // reset
     this.game.ctx.clearRect(0, 0, this.game.width, this.game.height);
     this.current?.render();
-
-    // Draw ground
-    this.game.level.render();
   }
 }

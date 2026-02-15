@@ -1,0 +1,84 @@
+{
+  "id": "0",
+  "size": { "width": 3200, "height": 1800 },
+
+  "playerSpawn": { "x": 200, "y": 1400 },
+
+  "camera": {
+    "bounds": { "x": 0, "y": 0, "width": 3200, "height": 1800 },
+    "deadZone": { "width": 300, "height": 200 }
+  },
+
+  "geometry": [
+    {
+      "type": "ground",
+      "x": 0,
+      "y": 1600,
+      "width": 3200,
+      "height": 200
+    },
+
+    {
+      "type": "platform",
+      "x": 400,
+      "y": 1300,
+      "width": 300,
+      "height": 40
+    },
+
+    {
+      "type": "platform",
+      "x": 900,
+      "y": 1100,
+      "width": 250,
+      "height": 40
+    },
+
+    {
+      "type": "platform",
+      "x": 1400,
+      "y": 900,
+      "width": 300,
+      "height": 40
+    },
+
+    {
+      "type": "wall",
+      "x": 1800,
+      "y": 1000,
+      "width": 60,
+      "height": 600
+    },
+
+    {
+      "type": "platform",
+      "x": 2100,
+      "y": 700,
+      "width": 400,
+      "height": 40
+    },
+
+    {
+      "type": "platform",
+      "x": 2600,
+      "y": 1000,
+      "width": 300,
+      "height": 40
+    }
+  ],
+
+  "hazards": [
+    {
+      "type": "pit",
+      "x": 1100,
+      "y": 1600,
+      "width": 400,
+      "height": 200
+    }
+  ],
+
+  "debug": {
+    "name": "Camera + Movement Stress Room",
+    "notes": "Tests dash distance, vertical camera follow, and deadzone behavior."
+  }
+}

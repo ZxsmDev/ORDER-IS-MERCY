@@ -1,6 +1,6 @@
 # ORDER IS MERCY
 
-> A bleak platformer about obedience, decay, and the quiet violence of systems that never stop running.
+> A bleak platformer metroidvania about obedience, decay, and the quiet violence of systems that never stop running.
 
 ---
 
@@ -28,7 +28,7 @@
 
 ## OVERVIEW
 
-**BUREAU** is a dark, atmospheric 2D platformer with precision combat and traversal, inspired by  
+**ORDER IS MERCY** is a dark, atmospheric 2D platformer with precision combat and traversal, inspired by  
 _Hollow Knight_, but grounded in themes of **bureaucracy, decay, and enforced purpose**.
 
 This is not a heroic journey.  
@@ -368,15 +368,16 @@ Structure prioritizes **maintainability over speed**.
 
 ## COMMIT HISTORY
 
-| #   | Commit                    | Description                                                                                      |
-| --- | ------------------------- | ------------------------------------------------------------------------------------------------ |
-| 1   | Refactoring Progress (P1) | Core architecture rebuilt: MAIN → GAMEMANAGER → GAMELOOP → STATEMANAGER → ENTITYMANAGER → PLAYER |
-| 2   | Refactoring Progress (P2) | Bug fixes, sizing logic, refined movement, early level infrastructure                            |
+| #   | Commit                    | Description                                                                                       |
+| --- | ------------------------- | ------------------------------------------------------------------------------------------------- |
+| 1   | Refactoring Progress (P1) | Core architecture rebuilt: MAIN → GAMEMANAGER → GAMELOOP → STATEMANAGER → ENTITYMANAGER → PLAYER  |
+| 2   | Refactoring Progress (P2) | Bug fixes, sizing logic, refined movement, early level infrastructure                             |
+| 3   | Refactoring Progress (P3) | Debug trajectory, improved collision detection, camera system, level system, core player movement |
 
 ---
 
->- “NONCOMPLIANCE IS NEGLIGENCE.”
->- “EVERY ACTION HAS A FILE.”
->- “FUNCTION IS FREEDOM.”
->- “THE SYSTEM REMEMBERS SO YOU DON’T HAVE TO.”
->- “YOU ARE SAFE WHILE RECORDED.”
+> - “NONCOMPLIANCE IS NEGLIGENCE.”
+> - “EVERY ACTION HAS A FILE.”
+> - “FUNCTION IS FREEDOM.”
+> - “THE SYSTEM REMEMBERS SO YOU DON’T HAVE TO.”
+> - “YOU ARE SAFE WHILE RECORDED.”

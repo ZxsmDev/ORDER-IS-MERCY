@@ -7,6 +7,9 @@ import StateManager from "./game/stateManager.js";
 import EntityManager from "./systems/entities/entityManager.js";
 import Player from "./systems/entities/player.js";
 
+// Camera
+import Camera from "./systems/camera/camera.js";
+
 // Level management
 import Level from "./systems/level/level.js";
 
@@ -19,6 +22,8 @@ import { MathUtils } from "./utils/math.js";
 document.addEventListener("DOMContentLoaded", () => {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
+  canvas.tabIndex = 0;
+  canvas.focus();
 
   const gameManager = new GameManager(
     canvas,
@@ -32,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     EntityManager,
     Player,
     Level,
+    Camera,
   );
   gameManager.init();
 });

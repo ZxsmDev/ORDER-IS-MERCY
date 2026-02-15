@@ -1,21 +1,50 @@
+import levelData from "./data/level0.json" with { type: "json" };
+import { Rect, Ramp, Circle, Polygon } from "./objects/objects.js";
+
 export default class Level {
   constructor(gameManager) {
     this.game = gameManager;
-    this.ground = {
-      x: 0,
-      y: this.game.height - 150,
-      width: this.game.width,
-      height: 150,    
+    this.data = null;
+    this.geometry = [];
+    this.collisionRects = [];
+    this.levelIndex = 0;
+    this.color = {
+      ground: "#1d1103",
+      platform: "#56381a",
+      wall: "#141110",
     }
+    this.load();
   }
-  render() {
-    // Draw ground
-    this.game.ctx.fillStyle = "black";
-    this.game.ctx.fillRect(
-      this.ground.x,
-      this.ground.y,
-      this.ground.width,
-      this.ground.height,
-    );
+  renderGeometry() {
+    this.collisionRects.forEach((rect) => {
+      rect.render(this.game.ctx);
+    });
+  }
+  renderEntities() {
+    this.game.entityManager.render();
+  }
+  load() {
+    // Load level data from JSON
+    const level0 = levelData;
+    this.data = level0;
+    this.geometry = level0.geometry;
+
+    // Create collision rectangles from geometry
+    this.geometry.forEach((obj) => {
+      switch (obj.type) {
+        case "ground":
+          const groundRect = new Rect(obj.x, obj.y, obj.width, obj.height, this.color.ground);
+          this.collisionRects.push(groundRect);
+          break;
+        case "platform":
+          const platformRect = new Rect(obj.x, obj.y, obj.width, obj.height, this.color.platform);
+          this.collisionRects.push(platformRect);
+          break;
+        case "wall":
+          const wallRect = new Rect(obj.x, obj.y, obj.width, obj.height, this.color.wall);
+          this.collisionRects.push(wallRect);
+          break;
+      }
+    });
   }
 }

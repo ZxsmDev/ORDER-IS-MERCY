@@ -19,13 +19,13 @@ export default class Debug {
       "FPS: " +
         Math.round(1000 / (performance.now() - this.lastFrameTime || 16)),
       15,
-      30,
+      30
     );
     ctx.fillText("Game State: " + this.game.stateManager.current.name, 15, 50);
     ctx.fillText(
       "Canvas Size: " + this.game.width + " x " + this.game.height,
       15,
-      70,
+      70
     );
     ctx.fillText("Center X: " + this.game.centerX.toFixed(2), 15, 90);
     ctx.fillText("Center Y: " + this.game.centerY.toFixed(2), 15, 110);
@@ -46,7 +46,7 @@ export default class Debug {
     ctx.fillText(
       "Geometry Objects: " + this.game.level.geometry.length,
       15,
-      410,
+      410
     );
     ctx.fillText(
       "Size: " +
@@ -54,7 +54,7 @@ export default class Debug {
         " x " +
         this.game.level.data.size.height,
       15,
-      430,
+      430
     );
 
     this.lastFrameTime = performance.now();
@@ -79,7 +79,7 @@ export default class Debug {
     ctx.moveTo(player.x + player.width / 2, player.y + player.height / 2);
     ctx.lineTo(
       player.x + player.width / 2 + player.vx * 0.1,
-      player.y + player.height / 2 + player.vy * 0.1,
+      player.y + player.height / 2 + player.vy * 0.1
     );
     ctx.stroke();
 
@@ -91,7 +91,7 @@ export default class Debug {
       ctx.fillRect(dashEndX, dashEndY, player.width, player.height);
 
       // ==============================
-      // DASH LINE (current → ghost)
+      // DASH LINE (current > ghost)
       // ==============================
       ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
       ctx.beginPath();

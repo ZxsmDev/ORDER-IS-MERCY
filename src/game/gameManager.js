@@ -1,17 +1,20 @@
 export default class GameManager {
   constructor(
-    canvas,
-    ctx,
-    collision,
-    mathUtils,
-    inputManager,
-    debug,
-    gameLoop,
-    stateManager,
-    entityManager,
-    PlayerClass,
-    LevelClass,
-    Camera,
+    canvas, // HTMLCanvasElement
+    ctx, // CanvasRenderingContext2D
+    collision, // Collision system (utils/collision.js)
+    mathUtils, // Math utilities (utils/math.js)
+    inputHandler, // Input handler (utils/input.js)
+    debug, // Debug utilities (utils/debug.js)
+    gameLoop, // Game loop system, just handles timing and calls update/render in state manager
+    stateManager, // State manager system, handles game states and transitions, calls update/render on current state
+    entityManager, // Entity manager system, handles all entities and their updates/renders
+    PlayerClass, // Player class, represents the player entity, global reference for player-specific logic
+    CombatManager, // Combat manager system, handles combat logic, damage calculations, and combat interactions
+    LevelClass, // Level class, represents the current level, holds level data and geometry, handles level-specific logic
+    Interaction, // Interaction system, handles player interactions with the environment and entities
+    Camera, // Camera system, handles view transformations, follows player, and manages rendering offsets
+    UserInterface // User interface system, handles UI elements, HUD, and player feedback
   ) {
     // Canvas and Context
     this.canvas = canvas;
@@ -31,17 +34,26 @@ export default class GameManager {
       this.level.data.playerSpawn.x,
       this.level.data.playerSpawn.y,
       25,
-      50,
+      50
     );
     this.entityManager = new entityManager(this);
+
+    // Interaction
+    this.interaction = new Interaction(this);
+
+    // Combat
+    this.combatManager = new CombatManager(this);
 
     // Camera
     this.camera = new Camera(this);
 
+    // User Interface
+    this.ui = new UserInterface(this);
+
     // Utils
     this.collision = collision;
     this.math = mathUtils;
-    this.input = new inputManager();
+    this.input = new inputHandler();
     this.debug = new debug(this);
 
     // Global properties

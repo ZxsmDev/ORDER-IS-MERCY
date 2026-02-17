@@ -1,0 +1,3 @@
+Todo:
+  - adjust ramp collision trajectory
+  - change level collision object sweeps to check all object types (rect, ramp, hazard)

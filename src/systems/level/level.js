@@ -7,17 +7,26 @@ export default class Level {
     this.data = null;
     this.geometry = [];
     this.collisionRects = [];
+    this.collisionRamps = [];
     this.levelIndex = 0;
     this.color = {
-      ground: "#1d1103",
-      platform: "#56381a",
-      wall: "#141110",
+      // ground: "#1d1103",
+      // platform: "#56381a",
+      // wall: "#141110",
+      
+      // For testing:
+      ground: "#000000",
+      platform: "#3F3F3F",
+      wall: "#111111",
     }
     this.load();
   }
   renderGeometry() {
     this.collisionRects.forEach((rect) => {
       rect.render(this.game.ctx);
+    });
+    this.collisionRamps.forEach((ramp) => {
+      ramp.render(this.game.ctx);
     });
   }
   renderEntities() {
@@ -43,6 +52,10 @@ export default class Level {
         case "wall":
           const wallRect = new Rect(obj.x, obj.y, obj.width, obj.height, this.color.wall);
           this.collisionRects.push(wallRect);
+          break;
+        case "ramp":
+          const ramp = new Ramp(obj.x, obj.y, obj.width, obj.height, obj.slope === 1 ? "up" : "down");
+          this.collisionRamps.push(ramp);
           break;
       }
     });

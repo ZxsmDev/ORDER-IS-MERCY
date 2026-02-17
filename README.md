@@ -304,13 +304,13 @@ Structure prioritizes **maintainability over speed**.
 
 - [x] Finalize GameManager architecture
 - [ ] Implement full StateManager
-- [ ] Modularize Entity system
-- [ ] Camera system with smoothing
+- [x] Modularize Entity system
+- [x] Camera system with smoothing
 - [x] Collision refinement
 
 ### Player
 
-- [ ] Finalize movement tuning
+- [x] Finalize movement tuning
 - [x] Dash decay logic
 - [ ] Wall cling stamina
 - [ ] Animation state machine
@@ -368,11 +368,12 @@ Structure prioritizes **maintainability over speed**.
 
 ## COMMIT HISTORY
 
-| #   | Commit                    | Description                                                                                       |
-| --- | ------------------------- | ------------------------------------------------------------------------------------------------- |
-| 1   | Refactoring Progress (P1) | Core architecture rebuilt: MAIN → GAMEMANAGER → GAMELOOP → STATEMANAGER → ENTITYMANAGER → PLAYER  |
-| 2   | Refactoring Progress (P2) | Bug fixes, sizing logic, refined movement, early level infrastructure                             |
-| 3   | Refactoring Progress (P3) | Debug trajectory, improved collision detection, camera system, level system, core player movement |
+| #   | Commit                          | Description                                                                                       |
+| --- | ------------------------------- | ------------------------------------------------------------------------------------------------- |
+| 1   | Refactoring Progress (P1)       | Core architecture rebuilt: MAIN → GAMEMANAGER → GAMELOOP → STATEMANAGER → ENTITYMANAGER → PLAYER  |
+| 2   | Refactoring Progress (P2)       | Bug fixes, sizing logic, refined movement, early level infrastructure                             |
+| 3   | Refactoring Progress (P3)       | Debug trajectory, improved collision detection, camera system, level system, core player movement |
+| 4   | Created New Preliminary Systems | Combat manager, interaction manager, ui + hud, better collision detection, ramp level object      |
 
 ---
 

@@ -32,6 +32,19 @@ export default class Player extends Entity {
       used: false,
     };
 
+    // Combat
+    this.combat = {
+      damage: 10,
+      attackSpeed: 1,
+      defense: 5,
+      health: 100,
+      modifiers: {
+        damage: 0,
+        defense: 0,
+        health: 0,
+      },
+    };
+
     // Flags
     this.grounded = false;
   }
@@ -168,6 +181,7 @@ export default class Player extends Entity {
   }
   moveAndCollide() {
     const rects = this.game.level.collisionRects;
+    const ramps = this.game.level.collisionRamps;
 
     //==========================================
     // Horizontal
@@ -185,6 +199,19 @@ export default class Player extends Entity {
         }
 
         this.vx = 0;
+      }
+    }
+
+    for (let ramp of ramps) {
+      if (this.game.collision.rampCollision(this, ramp)) {
+        // Align player with ramp surface
+        const rampY = ramp.getYAtX(this.x + this.width / 2);
+        if (this.y + this.height > rampY) {
+          this.y = rampY - this.height;
+          this.grounded = true;
+          this.dash.justDashed = false;
+          this.doubleJump.canDoubleJump = true;
+        }
       }
     }
 
@@ -220,12 +247,36 @@ export default class Player extends Entity {
       }
     }
 
+    for (let ramp of ramps) {
+      if (this.game.collision.rampCollision(this, ramp)) {
+        // Align player with ramp surface
+        const rampY = ramp.getYAtX(this.x + this.width / 2);
+        if (this.y + this.height > rampY) {
+          this.y = rampY - this.height;
+          this.grounded = true;
+          this.dash.justDashed = false;
+          this.doubleJump.canDoubleJump = true;
+        }
+
+        // If player is above the ramp, allow them to fall onto it
+         else {
+          this.grounded = false;
+        }
+      }
+    }
+
     // Unground if no collision below
     if (this.grounded) {
       this.y += 1;
       let stillGrounded = false;
       for (let rect of rects) {
         if (this.game.collision.rectCollision(this, rect)) {
+          stillGrounded = true;
+          break;
+        }
+      }
+      for (let ramp of ramps) {
+        if (this.game.collision.rampCollision(this, ramp)) {
           stillGrounded = true;
           break;
         }

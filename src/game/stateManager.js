@@ -28,6 +28,7 @@ export default class StateManager {
           // Reset transform for UI overlay
           this.game.ctx.setTransform(1, 0, 0, 1, 0, 0);
           this.game.debug.renderText();
+          this.game.ui.render();
         },
       },
       pause: {

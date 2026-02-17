@@ -374,6 +374,7 @@ Structure prioritizes **maintainability over speed**.
 | 2   | Refactoring Progress (P2)       | Bug fixes, sizing logic, refined movement, early level infrastructure                             |
 | 3   | Refactoring Progress (P3)       | Debug trajectory, improved collision detection, camera system, level system, core player movement |
 | 4   | Created New Preliminary Systems | Combat manager, interaction manager, ui + hud, better collision detection, ramp level object      |
+| 5   | Updated Level System            | Created a more in-depth level, adjusted some ramp physics, began constructing python level editor |
 
 ---
 

@@ -43,22 +43,22 @@ export class Ramp {
       ctx.lineTo(this.x + this.width, this.y + this.height);
       ctx.lineTo(this.x + this.width, this.y);
     } else {
-      ctx.moveTo(this.x, this.y);
-      ctx.lineTo(this.x + this.width, this.y);
-      ctx.lineTo(this.x + this.width, this.y + this.height);
+      ctx.moveTo(this.x + this.width, this.y + this.height);
+      ctx.lineTo(this.x, this.y);
+      ctx.lineTo(this.x, this.y + this.height);
     }
     ctx.closePath();
     ctx.fill();
   }
 }
 
-export class Circle {
+export class Radial {
   constructor(x, y, radius) {
     this.x = x;
     this.y = y;
     this.radius = radius;
   }
-  collisionCircle(other) {
+  collisionRadial(other) {
     const dx = this.x - other.x;
     const dy = this.y - other.y;
     const distance = Math.sqrt(dx * dx + dy * dy);

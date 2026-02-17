@@ -10,6 +10,7 @@ export default class Player extends Entity {
     this.speed = 400;
     this.gravity = 800;
     this.jumpStrength = 600;
+    this.fallMultiplier = 1.5;
 
     // Dashing properties
     this.dash = {
@@ -135,10 +136,12 @@ export default class Player extends Entity {
     }
 
     //==========================================
-    // Gravity (disabled during air dash)
+    // Gravity (disabled during air dash).
+    // Apply stronger gravity when falling to reduce "floaty" feel.
     //==========================================
     if (!this.grounded && !this.dash.isDashing) {
-      this.vy += this.gravity * this.game.delta;
+      const gravityScale = this.vy > 0 ? this.fallMultiplier : 1;
+      this.vy += this.gravity * gravityScale * this.game.delta;
     } else if (this.grounded) {
       this.vy = 0;
     }
@@ -146,19 +149,18 @@ export default class Player extends Entity {
     //==========================================
     // Jumping
     //==========================================
-    if (
-      this.game.input.isPressed(["ArrowUp", "KeyW", "Space"]) &&
-      this.grounded
-    ) {
+    if (this.game.input.isPressed(["ArrowUp", "Space"]) && this.grounded) {
       this.vy = this.dash.isDashing
         ? -this.jumpStrength * 1.2
         : -this.jumpStrength;
       this.grounded = false;
+      setTimeout(() => (this.doubleJump.delay = 0), 100); // Start double jump delay
     } else if (
-      this.game.input.isPressed(["ArrowUp", "KeyW", "Space"]) &&
+      this.game.input.isPressed(["ArrowUp", "Space"]) &&
       !this.grounded &&
       this.doubleJump.canDoubleJump &&
-      !this.doubleJump.used
+      !this.doubleJump.used &&
+      this.doubleJump.delay <= 0
     ) {
       this.vy = -this.jumpStrength;
       this.doubleJump.used = true;
@@ -251,16 +253,12 @@ export default class Player extends Entity {
       if (this.game.collision.rampCollision(this, ramp)) {
         // Align player with ramp surface
         const rampY = ramp.getYAtX(this.x + this.width / 2);
-        if (this.y + this.height > rampY) {
+
+        if (this.y + this.height >= rampY) {
           this.y = rampY - this.height;
           this.grounded = true;
           this.dash.justDashed = false;
           this.doubleJump.canDoubleJump = true;
-        }
-
-        // If player is above the ramp, allow them to fall onto it
-         else {
-          this.grounded = false;
         }
       }
     }

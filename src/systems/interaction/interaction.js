@@ -3,23 +3,27 @@ export default class Interaction {
     this.game = gameManager;
     this.interactables = [];
   }
-  addInteractable(interactable) {
-    this.interactables.push(interactable);
+  addInteractable(interactable, interactionType) {
+    this.interactables.push({ interactable, interactionType });
   }
   update() {
-    const player = this.game.entities.player;
-    for (let interactable of this.interactables) {
+    const player = this.game.player;
+
+    this.interactables.forEach(({ interactable, interactionType }) => {
       if (
-        this.game.collision.checkCollision(
-          player, // player reference
-          interactable, // interactable reference
-          "radial", // collision type
-          player.width * 3 // interaction radius (adjust as needed)
-        ) &&
-        this.game.input.isDown("E")
+        this.game.collision.checkCollision(player, interactable, "radial", 50)
+        // && player.isDown("KeyE")
       ) {
-        interactable.interact(player);
+        this.handleInteraction(interactionType);
+        console.log(`Interacted with ${interactionType}`);
       }
+    });
+  }
+  handleInteraction(interactionType) {
+    switch (interactionType) {
+      case "door":
+        console.log("Player interacts with a door!");
+        break;
     }
   }
 }

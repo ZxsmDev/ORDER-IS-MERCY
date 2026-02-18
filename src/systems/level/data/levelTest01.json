@@ -2,7 +2,7 @@
   "id": "structured_test_facility",
   "size": { "width": 8000, "height": 3500 },
 
-  "playerSpawn": { "x": 4000, "y": 3250 },
+  "playerSpawn": { "x": 500, "y": 3000 },
 
   "camera": {
     "bounds": { "x": 0, "y": 0, "width": 8000, "height": 3500 },
@@ -11,8 +11,16 @@
 
   "geometry": [
     { "type": "ground", "x": 0, "y": 3300, "width": 8000, "height": 200 },
-    { "type": "wall", "x": 0, "y": 0, "width": 50, "height": 3500 },
-    { "type": "wall", "x": 7950, "y": 0, "width": 50, "height": 3500 },
+    { "type": "wall", "x": 0, "y": 0, "width": 50, "height": 3200 },
+    {
+      "type": "interactable",
+      "x": 0,
+      "y": 3200,
+      "width": 50,
+      "height": 100,
+      "interaction": "door"
+    },
+    { "type": "wall", "x": 7950, "y": 0, "width": 50, "height": 3200 },
     { "type": "platform", "x": 0, "y": 0, "width": 8000, "height": 40 },
 
     { "type": "platform", "x": 350, "y": 3100, "width": 200, "height": 25 },

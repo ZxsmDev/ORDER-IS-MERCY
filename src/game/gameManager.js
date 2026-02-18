@@ -25,6 +25,9 @@ export default class GameManager {
     this.stateManager = new stateManager(this);
     this.gameLoop = new gameLoop(this);
 
+    // Interaction
+    this.interaction = new Interaction(this);
+
     // Level
     this.level = new LevelClass(this);
 
@@ -37,9 +40,6 @@ export default class GameManager {
       50
     );
     this.entityManager = new entityManager(this);
-
-    // Interaction
-    this.interaction = new Interaction(this);
 
     // Combat
     this.combatManager = new CombatManager(this);

@@ -34,10 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
   canvas.tabIndex = 0;
   canvas.focus();
 
-  canvas.addEventListener("click", () => {
-    // Request pointer lock
-    canvas.requestPointerLock();
-  });
+  // canvas.addEventListener("click", () => {
+  //   // Request pointer lock
+  //   canvas.requestPointerLock();
+  // });
 
   document.addEventListener("pointerlockchange", lockChangeAlert);
 

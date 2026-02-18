@@ -1,5 +1,6 @@
 export const Collision = {
   rectCollision(a, b) {
+    // Check if two rectangles overlap
     return (
       a.x < b.x + b.width &&
       a.x + a.width > b.x &&
@@ -7,22 +8,29 @@ export const Collision = {
       a.y + a.height > b.y
     );
   },
-  rampCollision(player, ramp) {
-    const playerCenterX = player.x + player.width / 2;
-    const rampYAtPlayerX = ramp.getYAtX(playerCenterX);
+  rampCollision(a, b) {
+    // Get the player's center X position
+    const playerCenterX = a.x + a.width / 2;
+
+    // Get the Y position of the ramp at the player's center X
+    const rampYAtPlayerX = b.getYAtX(playerCenterX);
+
+    // Check if the player's bottom is on or near the ramp surface
     return (
-      player.y + player.height > rampYAtPlayerX &&
-      player.y < rampYAtPlayerX + 10 && // Allow some tolerance
-      playerCenterX >= ramp.x &&
-      playerCenterX <= ramp.x + ramp.width
+      a.y + a.height >= rampYAtPlayerX && // Player's bottom is at or below the ramp
+      a.y + a.height <= rampYAtPlayerX + 10 && // Allow a small margin for ramp alignment
+      playerCenterX >= b.x && // Player is within the ramp's horizontal bounds
+      playerCenterX <= b.x + b.width
     );
   },
   radialCollision(a, b) {
+    // Calculate the distance between the centers of two circles
     const dx = a.x - b.x;
     const dy = a.y - b.y;
     return Math.hypot(dx, dy) < a.r + b.r;
   },
   checkCollision(refCaller, refTarget, type = "rect", radius = 0) {
+    // Determine the type of collision to check
     switch (type) {
       case "rect":
         return this.rectCollision(refCaller, refTarget);

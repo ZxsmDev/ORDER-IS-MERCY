@@ -1,17 +1,20 @@
 import testLevel00 from "./data/levelTest00.json" with { type: "json" };
 import testLevel01 from "./data/levelTest01.json" with { type: "json" };
-import { Rect, Ramp, Radial, Polygon } from "./objects/objects.js";
+import { Rect, Ramp, Radial, Polygon, Interactable } from "./objects/objects.js";
 
 export default class Level {
   constructor(gameManager) {
     this.game = gameManager;
+    this.levelIndex = 0;
     this.data = null;
     this.geometry = [];
-    this.collisionRects = [];
-    this.collisionRamps = [];
-    this.collisionRadial = [];
-    this.collisionPoly = [];
-    this.levelIndex = 0;
+    this.collision = {
+      rects: [],
+      ramps: [],
+      radial: [],
+      poly: [],
+    }
+    
     this.color = {
       // ground: "#1d1103",
       // platform: "#56381a",
@@ -25,17 +28,10 @@ export default class Level {
     this.load();
   }
   renderGeometry() {
-    this.collisionRects.forEach((rect) => {
-      rect.render(this.game.ctx);
-    });
-    this.collisionRamps.forEach((ramp) => {
-      ramp.render(this.game.ctx);
-    });
-    this.collisionRadial.forEach((radial) => {
-      radial.render(this.game.ctx);
-    });
-    this.collisionPoly.forEach((polygon) => {
-      polygon.render(this.game.ctx);
+    Object.values(this.collision).forEach((group) => {
+      group.forEach((obj) => {
+        obj.render(this.game.ctx);
+      });
     });
   }
   renderEntities() {
@@ -59,7 +55,7 @@ export default class Level {
             obj.height,
             this.color.ground,
           );
-          this.collisionRects.push(groundRect);
+          this.collision.rects.push(groundRect);
           break;
         case "platform":
           const platformRect = new Rect(
@@ -69,7 +65,7 @@ export default class Level {
             obj.height,
             this.color.platform,
           );
-          this.collisionRects.push(platformRect);
+          this.collision.rects.push(platformRect);
           break;
         case "wall":
           const wallRect = new Rect(
@@ -79,7 +75,7 @@ export default class Level {
             obj.height,
             this.color.wall,
           );
-          this.collisionRects.push(wallRect);
+          this.collision.rects.push(wallRect);
           break;
         case "ramp":
           const ramp = new Ramp(
@@ -89,7 +85,7 @@ export default class Level {
             obj.height,
             obj.slope === 1 ? "up" : "down",
           );
-          this.collisionRamps.push(ramp);
+          this.collision.ramps.push(ramp);
           break;
         case "radial":
           const radial = new Radial(
@@ -98,11 +94,21 @@ export default class Level {
             obj.radius,
             obj.color || "#FF0000",
           );
-          // this.collisionRadial.push(circle);
+          // this.collision.radial.push(circle);
           break;
         case "polygon":
           const polygon = new Polygon(obj.points, obj.color || "#00FF00");
-          // this.collisionPoly.push(polygon);
+          // this.collision.poly.push(polygon);
+          break;
+        case "interactable":
+          const interactable = new Interactable(
+            obj.x,
+            obj.y,
+            obj.width,
+            obj.height,
+          );
+          this.game.interaction.addInteractable(interactable, obj.interaction);
+          this.collision.rects.push(interactable);
           break;
       }
     });

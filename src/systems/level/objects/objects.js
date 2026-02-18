@@ -1,3 +1,5 @@
+import { Collision } from "../../../utils/collision.js";
+
 export class Rect {
   constructor(x, y, width, height, color = "rgb(0, 0, 0)") {
     this.x = x;
@@ -5,14 +7,6 @@ export class Rect {
     this.width = width;
     this.height = height;
     this.color = color;
-  }
-  collisionRect(other) {
-    return !(
-      this.x + this.width <= other.x ||
-      this.x >= other.x + other.width ||
-      this.y + this.height <= other.y ||
-      this.y >= other.y + other.height
-    );
   }
   render(ctx, color = this.color) {
     ctx.fillStyle = color;
@@ -58,12 +52,6 @@ export class Radial {
     this.y = y;
     this.radius = radius;
   }
-  collisionRadial(other) {
-    const dx = this.x - other.x;
-    const dy = this.y - other.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    return distance < this.radius + other.radius;
-  }
   render(ctx, color = "rgb(25, 25, 25)") {
     ctx.fillStyle = color;
     ctx.beginPath();
@@ -85,5 +73,18 @@ export class Polygon {
     }
     ctx.closePath();
     ctx.fill();
+  }
+}
+
+export class Interactable {
+  constructor(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+  }
+  render(ctx, color = "rgb(0, 200, 100)") {
+    ctx.fillStyle = color;
+    ctx.fillRect(this.x, this.y, this.width, this.height);
   }
 }

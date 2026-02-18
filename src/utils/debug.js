@@ -121,7 +121,7 @@ export default class Debug {
         const nextY = y + vy * stepTime;
 
         // Check collision with all platforms using swept step
-        for (let obj of this.game.level.collisionRects) {
+        for (let obj of this.game.level.collision.rects) {
           // Simple AABB overlap at the next step
           if (
             nextX < obj.x + obj.width &&

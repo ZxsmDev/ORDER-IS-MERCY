@@ -14,17 +14,16 @@ export default class StateManager {
       game: {
         name: "RUNNING",
         update: () => {
-          // Update game state
-          this.game.entityManager.update();
-          this.game.camera.update(this.game.ctx);
+          this.game.level.update(); // Update level (entities, interactions, collision objects)
+          this.game.camera.update(this.game.ctx); // Update camera position based on player
+          this.game.interaction.update(); // Update interactables (e.g. doors, switches) after level update for correct state
         },
         render: () => {
-          // Render game state
-          this.game.camera.applyTransform(this.game.ctx);
-          this.game.level.renderGeometry();
-          this.game.level.renderEntities();
-          // Draw trajectory in world space before reset
-          this.game.debug.render();
+          this.game.camera.applyTransform(this.game.ctx); // Apply camera transform before rendering world
+          this.game.level.renderGeometry(); // Draw level geometry (collision objects)
+          this.game.level.renderEntities(); // Draw entities (player, enemies, projectiles)
+          this.game.debug.render(); // Draw trajectory in world space before reset
+
           // Reset transform for UI overlay
           this.game.ctx.setTransform(1, 0, 0, 1, 0, 0);
           this.game.debug.renderText();

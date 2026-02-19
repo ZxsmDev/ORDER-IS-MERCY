@@ -1,6 +1,7 @@
 import testLevel00 from "./data/levelTest00.json" with { type: "json" };
 import testLevel01 from "./data/levelTest01.json" with { type: "json" };
 import { Rect, Ramp, Radial, Polygon, Interactable } from "./objects/objects.js";
+import EnemyClass from "../entities/enemy.js";
 
 export default class Level {
   constructor(gameManager) {
@@ -8,6 +9,7 @@ export default class Level {
     this.levelIndex = 0;
     this.data = null;
     this.geometry = [];
+    this.enemies = [];
     this.collision = {
       rects: [],
       ramps: [],
@@ -25,7 +27,6 @@ export default class Level {
       platform: "#3F3F3F",
       wall: "#111111",
     };
-    this.load();
   }
   renderGeometry() {
     Object.values(this.collision).forEach((group) => {
@@ -37,12 +38,20 @@ export default class Level {
   renderEntities() {
     this.game.entityManager.render();
   }
+  update() {
+    this.game.interaction.interactables.forEach((interactable) => {
+      interactable.interactable.update();
+    });
+    this.game.entityManager.update();
+  }
   load() {
     // Load level data from JSON
     const level0 = testLevel00;
     const level1 = testLevel01;
     this.data = level1;
     this.geometry = level1.geometry;
+    this.enemies = level1.enemies;
+
 
     // Create collision rectangles from geometry
     this.geometry.forEach((obj) => {
@@ -87,6 +96,16 @@ export default class Level {
           );
           this.collision.ramps.push(ramp);
           break;
+        case "interactable":
+          const interactable = new Interactable(
+            obj.x,
+            obj.y,
+            obj.width,
+            obj.height,
+          );
+          this.game.interaction.addInteractable(interactable, obj.interaction);
+          this.collision.rects.push(interactable);
+          break;
         case "radial":
           const radial = new Radial(
             obj.x,
@@ -100,17 +119,18 @@ export default class Level {
           const polygon = new Polygon(obj.points, obj.color || "#00FF00");
           // this.collision.poly.push(polygon);
           break;
-        case "interactable":
-          const interactable = new Interactable(
-            obj.x,
-            obj.y,
-            obj.width,
-            obj.height,
-          );
-          this.game.interaction.addInteractable(interactable, obj.interaction);
-          this.collision.rects.push(interactable);
-          break;
+        
       }
     });
-  }
+
+    this.enemies.forEach((enemyData) => {
+    const enemy = new EnemyClass(
+      this.game,
+      enemyData.spawn.x,
+      enemyData.spawn.y,
+      50, // Default width
+      50  // Default height
+    );
+    this.game.entityManager.addEnemy(enemy);
+  });}
 }

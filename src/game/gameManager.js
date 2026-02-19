@@ -32,13 +32,8 @@ export default class GameManager {
     this.level = new LevelClass(this);
 
     // Entities
-    this.player = new PlayerClass(
-      this,
-      this.level.data.playerSpawn.x,
-      this.level.data.playerSpawn.y,
-      25,
-      50
-    );
+    this.PlayerClass = PlayerClass;
+    this.player = null;
     this.entityManager = new entityManager(this);
 
     // Combat
@@ -64,6 +59,22 @@ export default class GameManager {
     this.delta = null;
   }
   init() {
+    this.level.load();
+
+    // Initialize the player after level data is loaded
+    const playerSpawn = this.level.data.playerSpawn; // Access player spawn data from the level
+    this.player = new this.PlayerClass(
+      this,
+      playerSpawn.x,
+      playerSpawn.y,
+      25, // Default width
+      50 // Default height
+    );
+
+    this.entityManager.entities.push(this.player);
+
+    this.camera.setTarget(this.player);
+
     this.ctx.fillStyle = "black";
     this.ctx.font = "16px Arial";
     this.stateManager.changeState(this.stateManager.states.game);
@@ -88,14 +99,5 @@ export default class GameManager {
       this.centerX = this.width / 2;
       this.centerY = this.height / 2;
     }
-  }
-  // Helper method to position an entity at a point (centered on that point)
-  positionAtCenter(entity, x, y) {
-    entity.x = x - entity.width / 2;
-    entity.y = y - entity.height / 2;
-  }
-  // Position entity at canvas center
-  positionAtCanvasCenter(entity) {
-    this.positionAtCenter(entity, this.centerX, this.centerY);
   }
 }

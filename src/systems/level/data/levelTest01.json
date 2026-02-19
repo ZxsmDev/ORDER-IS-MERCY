@@ -4,6 +4,25 @@
 
   "playerSpawn": { "x": 500, "y": 3000 },
 
+  "enemies": [
+    {
+      "type": "basic",
+      "spawn": { "x": 700, "y": 3000 },
+      "patrolPath": [
+        { "x": 700, "y": 3000 },
+        { "x": 900, "y": 3000 }
+      ]
+    },
+    {
+      "type": "basic",
+      "spawn": { "x": 2000, "y": 3000 },
+      "patrolPath": [
+        { "x": 2000, "y": 3000 },
+        { "x": 2200, "y": 3000 }
+      ]
+    }
+  ],
+
   "camera": {
     "bounds": { "x": 0, "y": 0, "width": 8000, "height": 3500 },
     "deadZone": { "width": 300, "height": 200 }

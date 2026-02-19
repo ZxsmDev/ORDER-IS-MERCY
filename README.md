@@ -376,6 +376,7 @@ Structure prioritizes **maintainability over speed**.
 | 4   | Created New Preliminary Systems | Combat manager, interaction manager, ui + hud, better collision detection, ramp level object           |
 | 5   | Updated Level System            | Created a more in-depth level, adjusted some ramp physics, began constructing python level editor      |
 | 6   | Refined Object Instantiation    | Trimmed and refactored object instantiation, improved and simplified collision, interaction foundation |
+| 7   | Attack Implementation & Enemies | Allowed player attacking, added enemies and adjusted gameManager declaration, interactable door        |
 
 ---
 

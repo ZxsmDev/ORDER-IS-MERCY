@@ -31,4 +31,11 @@ export default class InputHandler {
     }
     return !this.keys[keys] && this.previousKeys[keys];
   }
+  lastDirection() {
+    if (this.isDown(["ArrowLeft", "KeyA"])) return { x: -1, y: 0 };
+    if (this.isDown(["ArrowRight", "KeyD"])) return { x: 1, y: 0 };
+    if (this.isDown(["ArrowUp", "KeyW"])) return { x: 0, y: -1 };
+    if (this.isDown(["ArrowDown", "KeyS"])) return { x: 0, y: 1 };
+    return { x: 0, y: 0 };
+  }
 }

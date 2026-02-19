@@ -37,6 +37,7 @@ export default class Player extends Entity {
     this.combat = {
       damage: 10,
       attackSpeed: 1,
+      attackDistance: 1.7,
       defense: 5,
       health: 100,
       modifiers: {
@@ -44,6 +45,9 @@ export default class Player extends Entity {
         defense: 0,
         health: 0,
       },
+      dirX: 1, // 1 for right, -1 for left
+      dirY: 0, // 0 for horizontal attacks, 1 for downward attacks, -1 for upward attacks
+      attacking: false,
     };
 
     // Flags
@@ -180,6 +184,38 @@ export default class Player extends Entity {
   render() {
     this.game.ctx.fillStyle = "skyblue";
     this.game.ctx.fillRect(this.x, this.y, this.width, this.height);
+
+    if (this.combat.attacking) {
+      this.game.ctx.fillStyle = "red";
+      // HANDLE VERTICAL ATTACKS
+      if (this.combat.dirY === -1) {
+        // Upward attack
+        this.game.ctx.fillRect(
+          this.x - 10,
+          this.y - this.height * this.combat.attackDistance - 20,
+          this.width + 20,
+          this.height * this.combat.attackDistance
+        );
+      } else if (this.combat.dirY === 1) {
+        // Downward attack
+        this.game.ctx.fillRect(
+          this.x - 10,
+          this.y + this.height + 20,
+          this.width + 20,
+          this.height * this.combat.attackDistance
+        );
+      } else {
+        // HORIZONTAL ATTACKS
+        this.game.ctx.fillRect(
+          this.combat.dirX == 1
+            ? this.x + 20 + this.width
+            : this.x - this.width * 2 * this.combat.attackDistance - 20,
+          this.y - 10,
+          this.height * this.combat.attackDistance,
+          this.width + this.height / 2 + 20
+        );
+      }
+    }
   }
   moveAndCollide() {
     const collision = this.game.collision;
@@ -294,5 +330,29 @@ export default class Player extends Entity {
     } else {
       this.doubleJump.canDoubleJump = false; // Prevent double jump if not grounded
     }
+  }
+  attack() {
+    if (this.combat.attacking) return; // Prevent spamming attacks
+
+    if (this.game.input.isDown(["ArrowUp", "KeyW"])) {
+      this.combat.dirY = -1;
+      this.combat.dirX = 0;
+    } else if (this.game.input.isDown(["ArrowDown", "KeyS"])) {
+      this.combat.dirY = 1;
+      this.combat.dirX = 0;
+    } else if (this.game.input.isDown(["ArrowLeft", "KeyA"])) {
+      this.combat.dirX = -1;
+      this.combat.dirY = 0;
+    } else if (this.game.input.isDown(["ArrowRight", "KeyD"])) {
+      this.combat.dirX = 1;
+      this.combat.dirY = 0;
+    } else {
+      // Default to facing direction if no input
+      this.combat.dirX = this.combat.dirX || 1; // Default to right
+      this.combat.dirY = 0;
+    }
+
+    this.combat.attacking = true;
+    setTimeout(() => (this.combat.attacking = false), 100); // Attack duration
   }
 }

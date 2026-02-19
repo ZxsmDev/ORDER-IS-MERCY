@@ -3,13 +3,32 @@ export default class EntityManager {
     this.game = gameManager;
 
     this.entities = [];
-
-    this.entities.push(this.game.player);
   }
   update() {
-    this.entities.forEach((e) => e.update());
+    this.entities.forEach((e, index) => {
+      if (e && typeof e.update === "function") {
+        e.update();
+      } else {
+        console.warn(
+          `Entity at index ${index} is invalid and will be skipped:`,
+          e
+        );
+      }
+    });
   }
   render() {
-    this.entities.forEach((e) => e.render());
+    this.entities.forEach((e, index) => {
+      if (e && typeof e.render === "function") {
+        e.render();
+      } else {
+        console.warn(
+          `Entity at index ${index} is invalid and will be skipped:`,
+          e
+        );
+      }
+    });
+  }
+  addEnemy(enemy) {
+    this.entities.push(enemy);
   }
 }

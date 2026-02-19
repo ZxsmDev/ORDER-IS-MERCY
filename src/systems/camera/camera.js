@@ -7,7 +7,7 @@ export default class Camera {
     this.height = gameManager.height;
     this.followTarget = gameManager.player; // Default to following player
   }
-  follow(entity) {
+  setTarget(entity) {
     this.followTarget = entity;
   }
   update() {

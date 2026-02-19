@@ -1,7 +1,7 @@
 export default class Debug {
   constructor(gameManager) {
     this.game = gameManager;
-    this.on = false;
+    this.on = true;
   }
   toggle() {
     this.on = !this.on;

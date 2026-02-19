@@ -1,5 +1,3 @@
-import { Collision } from "../../../utils/collision.js";
-
 export class Rect {
   constructor(x, y, width, height, color = "rgb(0, 0, 0)") {
     this.x = x;
@@ -78,13 +76,34 @@ export class Polygon {
 
 export class Interactable {
   constructor(x, y, width, height) {
-    this.x = x;
+    this.x = x; // Center the interactable for radial collision
     this.y = y;
     this.width = width;
     this.height = height;
+
+    this.interacted = false; // Track if the interactable has been interacted with
   }
   render(ctx, color = "rgb(0, 200, 100)") {
     ctx.fillStyle = color;
     ctx.fillRect(this.x, this.y, this.width, this.height);
+  }
+  update() {
+    if (this.interacted && this.width > 0) {
+      this.width -= 5; // Example of changing the interactable after interaction
+    }
+  }
+  action(type) {
+    switch (type) {
+      case "door":
+        console.log("The door opens!");
+
+        this.interacted = true; // Mark as interacted
+        break;
+      default:
+        console.log(`Unknown interaction type: ${type}`);
+    }
+    setTimeout(() => {
+      this.interacted = false; // Reset interaction after a delay
+    }, 1000);
   }
 }

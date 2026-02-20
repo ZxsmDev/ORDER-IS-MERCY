@@ -11,6 +11,7 @@ export default class Player extends Entity {
     this.gravity = 800;
     this.jumpStrength = 600;
     this.fallMultiplier = 1.5;
+    this.facingX = 1;
 
     // Dashing properties
     this.dash = {
@@ -45,15 +46,55 @@ export default class Player extends Entity {
         defense: 0,
         health: 0,
       },
-      dirX: 1, // 1 for right, -1 for left
-      dirY: 0, // 0 for horizontal attacks, 1 for downward attacks, -1 for upward attacks
+      dirX: 1,
+      dirY: 0,
       attacking: false,
     };
 
     // Flags
     this.grounded = false;
   }
+  render() {
+    this.game.ctx.fillStyle = "skyblue";
+    this.game.ctx.fillRect(this.x, this.y, this.width, this.height);
+
+    if (this.combat.attacking) {
+      this.game.ctx.fillStyle = "rgba(200, 100, 255, 0.5)";
+      // HANDLE VERTICAL ATTACKS
+      if (this.combat.dirY === -1) {
+        // Upward attack
+        this.game.ctx.fillRect(
+          this.x - 10,
+          this.y - this.height * this.combat.attackDistance - 20,
+          this.width + 20,
+          this.height * this.combat.attackDistance,
+        );
+      } else if (this.combat.dirY === 1) {
+        // Downward attack
+        this.game.ctx.fillRect(
+          this.x - 10,
+          this.y + this.height + 20,
+          this.width + 20,
+          this.height * this.combat.attackDistance,
+        );
+      } else {
+        // HORIZONTAL ATTACKS
+        this.game.ctx.fillRect(
+          this.combat.dirX == 1
+            ? this.x + 20 + this.width
+            : this.x - this.width * 2 * this.combat.attackDistance - 20,
+          this.y - 10,
+          this.height * this.combat.attackDistance,
+          this.width + this.height / 2 + 20,
+        );
+      }
+    }
+  }
   update() {
+    // Update facing based on the last horizontal key pressed
+    if (this.game.input.isPressed(["ArrowLeft", "KeyA"])) this.facingX = -1;
+    else if (this.game.input.isPressed(["ArrowRight", "KeyD"]))
+      this.facingX = 1;
     //==========================================
     // Dashing - Initiate
     //==========================================
@@ -181,42 +222,6 @@ export default class Player extends Entity {
       this.game.debug.toggle();
     }
   }
-  render() {
-    this.game.ctx.fillStyle = "skyblue";
-    this.game.ctx.fillRect(this.x, this.y, this.width, this.height);
-
-    if (this.combat.attacking) {
-      this.game.ctx.fillStyle = "red";
-      // HANDLE VERTICAL ATTACKS
-      if (this.combat.dirY === -1) {
-        // Upward attack
-        this.game.ctx.fillRect(
-          this.x - 10,
-          this.y - this.height * this.combat.attackDistance - 20,
-          this.width + 20,
-          this.height * this.combat.attackDistance
-        );
-      } else if (this.combat.dirY === 1) {
-        // Downward attack
-        this.game.ctx.fillRect(
-          this.x - 10,
-          this.y + this.height + 20,
-          this.width + 20,
-          this.height * this.combat.attackDistance
-        );
-      } else {
-        // HORIZONTAL ATTACKS
-        this.game.ctx.fillRect(
-          this.combat.dirX == 1
-            ? this.x + 20 + this.width
-            : this.x - this.width * 2 * this.combat.attackDistance - 20,
-          this.y - 10,
-          this.height * this.combat.attackDistance,
-          this.width + this.height / 2 + 20
-        );
-      }
-    }
-  }
   moveAndCollide() {
     const collision = this.game.collision;
     const collisionObjects = this.game.level.collision;
@@ -327,8 +332,6 @@ export default class Player extends Entity {
       if (!stillGrounded) {
         this.grounded = false;
       }
-    } else {
-      this.doubleJump.canDoubleJump = false; // Prevent double jump if not grounded
     }
   }
   attack() {
@@ -348,11 +351,11 @@ export default class Player extends Entity {
       this.combat.dirY = 0;
     } else {
       // Default to facing direction if no input
-      this.combat.dirX = this.combat.dirX || 1; // Default to right
+      this.combat.dirX = this.facingX || 1; // Use last horizontal input as facing
       this.combat.dirY = 0;
     }
 
     this.combat.attacking = true;
-    setTimeout(() => (this.combat.attacking = false), 100); // Attack duration
+    setTimeout(() => (this.combat.attacking = false), 400); // Attack duration
   }
 }

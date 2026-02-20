@@ -1,0 +1,75 @@
+{
+  "id": "",
+  "debug": {
+    "name": "",
+    "notes": "self.level_notes_entry.get()"
+  },
+  "size": {
+    "width": 1700,
+    "height": 1000
+  },
+  "playerSpawn": {
+    "x": 0,
+    "y": 0
+  },
+  "camera": {
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1700,
+      "height": 1000
+    },
+    "deadZone": {
+      "width": 300,
+      "height": 200
+    }
+  },
+  "geometry": [
+    {
+      "type": "ground",
+      "x": 0,
+      "y": 900,
+      "width": 1700,
+      "height": 100
+    },
+    {
+      "type": "wall",
+      "x": 0,
+      "y": 0,
+      "width": 50,
+      "height": 825
+    },
+    {
+      "type": "wall",
+      "x": 1650,
+      "y": 0,
+      "width": 50,
+      "height": 825
+    },
+    {
+      "type": "playerSpawn",
+      "x": 400,
+      "y": 850,
+      "width": 25,
+      "height": 50
+    },
+    {
+      "type": "interactable",
+      "x": 0,
+      "y": 825,
+      "width": 25,
+      "height": 75,
+      "interaction": "door",
+      "direction": "left"
+    },
+    {
+      "type": "interactable",
+      "x": 1675,
+      "y": 825,
+      "width": 25,
+      "height": 75,
+      "interaction": "door",
+      "direction": "left"
+    }
+  ]
+}

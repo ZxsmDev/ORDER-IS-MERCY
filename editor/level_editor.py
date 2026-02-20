@@ -1,286 +1,433 @@
 import os
-import tkinter as tk
-from tkinter import ttk, filedialog, simpledialog, messagebox
 import json
+import tkinter as tk
+from tkinter import ttk, filedialog, messagebox
+
+# ============================================================
+# CONFIG
+# ============================================================
+
+TILE = 25
+MAX_WIDTH_PX = 1700
+MAX_HEIGHT_PX = 1000
+
+ROWS = MAX_HEIGHT_PX // TILE
+COLS = MAX_WIDTH_PX // TILE
+
+# ============================================================
+# OBJECT DEFINITIONS (authoritative)
+# ============================================================
+
+OBJECT_DEFS = {
+    "ground": {"color": "#1d1103", "type": "ground"},
+    "platform": {"color": "#56381a", "type": "platform"},
+    "wall": {"color": "#111111", "type": "wall"},
+    "ramp_up": {"color": "#444444", "type": "ramp", "slope": 1},
+    "ramp_down": {"color": "#666666", "type": "ramp", "slope": -1},
+    "door": {
+        "color": "#57391a",
+        "type": "interactable",
+        "interaction": "door",
+        "direction": "left",
+        "height": 3,
+    },
+    "player": {
+        "color": "#1E90FF",
+        "type": "playerSpawn",
+        "height": 2,
+    },
+    "enemy": {
+        "color": "#8B0000",
+        "type": "enemy",
+        "height": 2,
+    },
+}
+
+TOOLS = ("paint", "rect", "line", "erase")
+META_FIELDS = ("id", "name", "notes")
+
+# ============================================================
+# LEVEL EDITOR
+# ============================================================
 
 class LevelEditor:
     def __init__(self, root):
         self.root = root
 
-        # ====== Configurable Parameters ======
-        self.rows = 20
-        self.cols = 30
-        self.tile_size = 25
+        # ---------- State ----------
+        self.current_object = "ground"
+        self.current_tool = "paint"
 
-        self.current_object = "empty"
+        self.objects = []
+        self.canvas_items = {}
 
-        self.objects = {
-            "empty": "gray",
-            "ground": "#000000",
-            "platform": "#505050",
-            "wall": "#191919",
-            "ramp_up": "#CD6600",
-            "ramp_down": "#FFB300"
-        }
+        self.undo_stack = []
+        self.redo_stack = []
 
-        self.grid_data = []
-        self.rect_ids = []
+        self.drag_start = None
+        self.is_dragging = False
+
+        self.show_camera = True
+
+        # self.level_id = "test_level" 
+        # self.level_name = "Test Level" 
+        # self.level_notes = ""
 
         self.setup_ui()
-        self.create_grid()
+        self.draw_grid()
+        self.draw_camera_overlay()
 
-    # ================= UI ===================
+    # ========================================================
+    # UI
+    # ========================================================
 
     def setup_ui(self):
-        style = ttk.Style(self.root)
-        try:
-            style.configure("Primary.TButton", foreground="#ffffff", background="#2E8B57")
-            style.configure("Accent.TFrame", background="#1f1f1f")
-        except Exception:
-            pass
-
         main = ttk.Frame(self.root)
         main.pack(fill=tk.BOTH, expand=True)
 
-        # Left control panel
-        left = ttk.Frame(main, style="Accent.TFrame", padding=(25, 25))
+        left = ttk.Frame(main, padding=30)
         left.pack(side=tk.LEFT, fill=tk.Y)
 
-        title_frame = ttk.Frame(left)
-        title_frame.pack(fill=tk.X)
+        ttk.Label(left, text="Level Editor", font=("Segoe UI", 16, "bold")).pack(pady=5)
 
-        ttk.Label(title_frame, text="Level Editor", font=(None, 18, "bold")).pack(anchor=tk.W, padx=(80, 80), pady=(10, 10))
+        # ----- Level Meta ----- 
+        meta = ttk.LabelFrame(left, text="Meta")
+        meta.pack(fill=tk.X, pady=5)
 
-        cfg_frame = ttk.Frame(left)
-        cfg_frame.pack(fill=tk.X, padx=(30, 30), pady=(20, 10))
+        for field in META_FIELDS:
+            ttk.Label(meta, text=field.capitalize()).pack(anchor=tk.W, padx=10, pady=(10, 0))
+            entry = ttk.Entry(meta)
+            entry.pack(fill=tk.X, padx=10, pady=5)
 
-        ttk.Label(cfg_frame, text="Rows").grid(row=0, column=0, sticky=tk.W, padx=(20, 0), pady=(10, 10))
-        self.rows_entry = ttk.Entry(cfg_frame, width=6)
-        self.rows_entry.insert(0, str(self.rows))
-        self.rows_entry.grid(row=0, column=1,padx=(0, 20), pady=(10, 10))
+        # ----- Object Palette (COLOR VISUALIZATION) -----
+        palette = ttk.LabelFrame(left, text="Objects")
+        palette.pack(fill=tk.X, pady=5)
 
-        ttk.Label(cfg_frame, text="Cols").grid(row=1, column=0, sticky=tk.W, padx=(20, 0), pady=(10, 10))
-        self.cols_entry = ttk.Entry(cfg_frame, width=6)
-        self.cols_entry.insert(0, str(self.cols))
-        self.cols_entry.grid(row=1, column=1, padx=(0, 20), pady=(10, 10))
-
-        ttk.Label(cfg_frame, text="Tile Size").grid(row=2, column=0, sticky=tk.W, padx=(20, 20), pady=(10, 10))
-        self.tile_entry = ttk.Entry(cfg_frame, width=6)
-        self.tile_entry.insert(0, str(self.tile_size))
-        self.tile_entry.grid(row=2, column=1, padx=(0, 20), pady=(10, 10))
-
-        btn_frame = ttk.Frame(left)
-        btn_frame.pack(fill=tk.X, padx=(50, 50), pady=(20, 20))
-
-        ttk.Button(btn_frame, text="Resize", command=self.resize_grid, style="Primary.TButton").pack(side=tk.LEFT, padx=(10, 10), pady=(10, 10))
-        ttk.Button(btn_frame, text="Save JSON", command=self.save_json).pack(side=tk.LEFT, padx=(0, 10), pady=(10, 10))
-
-        ttk.Separator(left, orient=tk.HORIZONTAL).pack(fill=tk.X, pady=(20, 20))
-
-        # Object selector and preview
-        ttk.Label(left, text="Object Type", font=(None, 16, "bold")).pack(anchor=tk.W, padx=(20, 20), pady=(10, 10))
         self.object_var = tk.StringVar(value=self.current_object)
-        dropdown = ttk.Combobox(left, textvariable=self.object_var, values=list(self.objects.keys()), state="readonly")
-        dropdown.pack(fill=tk.X, padx=(20, 10), pady=(20, 10))
-        dropdown.bind("<<ComboboxSelected>>", self.change_object)
 
-        color_preview_frame = ttk.Frame(left)
-        color_preview_frame.pack(fill=tk.X, padx=(20, 10), pady=(20, 10))
-        ttk.Label(color_preview_frame, text="Color Preview:").pack(side=tk.LEFT, padx=(10, 10))
-        self.color_preview = tk.Canvas(color_preview_frame, width=24, height=16, bd=1)
-        self.color_preview.pack(side=tk.RIGHT, padx=(10, 10), pady=(5, 5))
-        self._update_color_preview()
+        for name, spec in OBJECT_DEFS.items():
+            b = tk.Radiobutton(
+                palette,
+                text=name,
+                variable=self.object_var,
+                value=name,
+                indicatoron=False,
+                background=spec["color"],
+                fg="white",
+                selectcolor=spec["color"],
+                command=self.change_object,
+                relief=tk.FLAT,
+                height=1
+            )
+            b.pack(fill=tk.X, padx=5, pady=2)
 
-        ttk.Separator(left, orient=tk.HORIZONTAL).pack(fill=tk.X, padx=(20, 10), pady=(20, 10))
+        # ----- Tools -----
+        tool_box = ttk.LabelFrame(left, text="Tools")
+        tool_box.pack(fill=tk.X, pady=5)
 
-        # Description / instructions
-        ttk.Label(left, text="Tool Info", font=(None, 16, "bold")).pack(anchor=tk.W, padx=(20, 20), pady=(10, 10))
-        info = (
-            "Left-click a tile to place the selected object.\n"
-            "Right-click a tile to edit its description.\n"
-            "Use Resize to change the grid and Save JSON to export geometry."
+        self.tool_var = tk.StringVar(value=self.current_tool)
+        for t in TOOLS:
+            ttk.Radiobutton(
+                tool_box,
+                text=t.capitalize(),
+                value=t,
+                variable=self.tool_var,
+                command=self.change_tool
+            ).pack(anchor=tk.W, padx=10)
+
+        # ----- Actions -----
+        ttk.Button(left, text="Undo (Ctrl+Z)", command=self.undo).pack(fill=tk.X, pady=2)
+        ttk.Button(left, text="Redo (Ctrl+Y)", command=self.redo).pack(fill=tk.X, pady=2)
+        ttk.Button(left, text="Save JSON", command=self.save_json).pack(fill=tk.X, pady=5)
+        ttk.Button(left, text="Clear", command=self.clear_level).pack(fill=tk.X)
+
+        self.status = tk.StringVar(value="Ready")
+        ttk.Label(left, textvariable=self.status, wraplength=220).pack(pady=5)
+
+        # ---------- Canvas ----------
+        self.canvas = tk.Canvas(
+            main,
+            bg="#121212",
+            width=MAX_WIDTH_PX,
+            height=MAX_HEIGHT_PX
+        )
+        self.canvas.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
+        self.canvas.bind("<Button-1>", self.on_mouse_down)
+        self.canvas.bind("<B1-Motion>", self.on_mouse_drag)
+        self.canvas.bind("<ButtonRelease-1>", self.on_mouse_up)
+        self.canvas.bind("<Motion>", self.on_mouse_move)
+
+        self.root.bind("<Control-z>", lambda e: self.undo())
+        self.root.bind("<Control-y>", lambda e: self.redo())
+
+    # ========================================================
+    # Grid + Camera
+    # ========================================================
+
+    def draw_grid(self):
+        self.canvas.delete("grid")
+
+        for y in range(0, MAX_HEIGHT_PX + 1, TILE):
+            self.canvas.create_line(0, y, MAX_WIDTH_PX, y, fill="#2a2a2a", tags="grid")
+
+        for x in range(0, MAX_WIDTH_PX + 1, TILE):
+            self.canvas.create_line(x, 0, x, MAX_HEIGHT_PX, fill="#2a2a2a", tags="grid")
+
+    def draw_camera_overlay(self):
+        self.canvas.delete("camera")
+
+        if not self.show_camera:
+            return
+
+        # Camera bounds
+        self.canvas.create_rectangle(
+            0, 0, MAX_WIDTH_PX, MAX_HEIGHT_PX,
+            outline="#00ffff",
+            width=2,
+            tags="camera"
         )
 
-        info_label = ttk.Label(left, text=info, wraplength=220, justify=tk.LEFT)
-        info_label.pack(fill=tk.X, padx=(20, 10), pady=(20, 10))
+        # Deadzone
+        dz_w, dz_h = 300, 200
+        cx, cy = MAX_WIDTH_PX // 2, MAX_HEIGHT_PX // 2
 
-        # Small live status area
-        self.status_var = tk.StringVar(value="Selected: empty")
-        ttk.Label(left, textvariable=self.status_var, font=(None, 9)).pack(anchor=tk.W, padx=(20, 10), pady=(20, 10))
+        self.canvas.create_rectangle(
+            cx - dz_w // 2,
+            cy - dz_h // 2,
+            cx + dz_w // 2,
+            cy + dz_h // 2,
+            outline="#ff00ff",
+            dash=(4, 2),
+            tags="camera"
+        )
 
-        # Canvas on the right
-        right = ttk.Frame(main)
-        right.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+    # ========================================================
+    # Tools
+    # ========================================================
 
-        self.canvas = tk.Canvas(right, bg="#121212", highlightthickness=0)
-        self.canvas.pack(fill=tk.BOTH, expand=True)
+    def change_tool(self):
+        self.current_tool = self.tool_var.get()
+        self.status.set(f"Tool: {self.current_tool}")
 
-    # ============== Grid Logic ==============
-
-    def create_grid(self):
-        self.canvas.delete("all")
-        self.grid_data = []
-        self.rect_ids = []
-
-        for r in range(self.rows):
-            row = []
-            rect_row = []
-            for c in range(self.cols):
-                x1 = c * self.tile_size
-                y1 = r * self.tile_size
-                x2 = x1 + self.tile_size
-                y2 = y1 + self.tile_size
-
-                rect = self.canvas.create_rectangle(
-                    x1, y1, x2, y2,
-                    fill="gray",
-                    outline="white"
-                )
-
-                self.canvas.tag_bind(rect, "<Button-1>", lambda e, row=r, col=c: self.place_object(row, col))
-                self.canvas.tag_bind(rect, "<Button-3>", lambda e, row=r, col=c: self.edit_description(row, col))
-
-                row.append({
-                    "type": "empty",
-                    "description": ""
-                })
-                rect_row.append(rect)
-
-            self.grid_data.append(row)
-            self.rect_ids.append(rect_row)
-
-        self.canvas.config(width=self.cols*self.tile_size, height=self.rows*self.tile_size)
-
-    def resize_grid(self):
-        try:
-            self.rows = int(self.rows_entry.get())
-            self.cols = int(self.cols_entry.get())
-            self.tile_size = int(self.tile_entry.get())
-            self.create_grid()
-        except ValueError:
-            messagebox.showerror("Error", "Rows, Cols, and Tile Size must be integers.")
-
-    def change_object(self, event):
+    def change_object(self):
         self.current_object = self.object_var.get()
-        self._update_color_preview()
-        self.status_var.set(f"Selected: {self.current_object}")
+        self.status.set(f"Object: {self.current_object}")
 
-    def place_object(self, row, col):
-        obj_type = self.current_object
-        self.grid_data[row][col]["type"] = obj_type
+    def snap(self, v):
+        return (v // TILE) * TILE
 
-        self.canvas.itemconfig(
-            self.rect_ids[row][col],
-            fill=self.objects[obj_type]
-        )
-        self.status_var.set(f"Placed {obj_type} at {row},{col}")
+    # ========================================================
+    # Mouse
+    # ========================================================
 
-    def edit_description(self, row, col):
-        desc = simpledialog.askstring("Tile Description", "Enter description:")
-        if desc is not None:
-            self.grid_data[row][col]["description"] = desc
-            self.status_var.set(f"Updated description at {row},{col}")
+    def on_mouse_down(self, e):
+        self.drag_start = (self.snap(e.x), self.snap(e.y))
+        self.is_dragging = True
 
-    def _update_color_preview(self):
-        try:
-            color = self.objects.get(self.object_var.get(), "gray")
-        except Exception:
-            color = "gray"
-        self.color_preview.delete("all")
-        self.color_preview.create_rectangle(0, 0, 24, 18, fill=color, outline="black")
+        if self.current_tool == "paint":
+            self.place_object(*self.drag_start)
 
-    # ============== JSON Export ==============
+        elif self.current_tool == "erase":
+            self.erase_at(e.x, e.y)
 
-    def generate_geometry(self):
-        """
-        Converts grid into geometry objects compatible
-        with your Level class.
-        """
-        geometry = []
+    def on_mouse_drag(self, e):
+        if not self.is_dragging:
+            return
 
-        for r in range(self.rows):
-            for c in range(self.cols):
-                tile = self.grid_data[r][c]
-                t = tile["type"]
+        x, y = self.snap(e.x), self.snap(e.y)
 
-                if t == "empty":
-                    continue
+        if self.current_tool == "paint":
+            self.place_object(x, y)
+        elif self.current_tool == "erase":
+            self.erase_at(e.x, e.y)
 
-                x = c * self.tile_size
-                y = r * self.tile_size
+    def on_mouse_up(self, e):
+        if not self.drag_start:
+            return
 
-                if t in ["ground", "platform", "wall"]:
-                    geometry.append({
-                        "type": t,
-                        "x": x,
-                        "y": y,
-                        "width": self.tile_size,
-                        "height": self.tile_size,
-                    })
+        x0, y0 = self.drag_start
+        x1, y1 = self.snap(e.x), self.snap(e.y)
 
-                elif t == "ramp_up":
-                    geometry.append({
-                        "type": "ramp",
-                        "x": x,
-                        "y": y,
-                        "width": self.tile_size,
-                        "height": self.tile_size,
-                        "slope": 1,
-                    })
+        if self.current_tool == "rect":
+            self.place_rect(x0, y0, x1, y1)
+        elif self.current_tool == "line":
+            self.place_line(x0, y0, x1, y1)
 
-                elif t == "ramp_down":
-                    geometry.append({
-                        "type": "ramp",
-                        "x": x,
-                        "y": y,
-                        "width": self.tile_size,
-                        "height": self.tile_size,
-                        "slope": -1,
-                    })
+        self.drag_start = None
+        self.is_dragging = False
 
-        return geometry
+    def on_mouse_move(self, e):
+        self.canvas.delete("cursor")
+        x, y = self.snap(e.x), self.snap(e.y)
 
-    def save_json(self):
-        data = {
-            "rows": self.rows,
-            "cols": self.cols,
-            "tile_size": self.tile_size,
-            "geometry": self.generate_geometry()
+        self.canvas.create_line(x, 0, x, MAX_HEIGHT_PX, fill="#444444", tags="cursor")
+        self.canvas.create_line(0, y, MAX_WIDTH_PX, y, fill="#444444", tags="cursor")
+
+        self.status.set(f"x: {x}px  y: {y}px")
+
+    # ========================================================
+    # Placement
+    # ========================================================
+
+    def push_undo(self):
+        self.undo_stack.append(json.dumps(self.objects))
+        self.redo_stack.clear()
+
+    def place_object(self, x, y):
+        spec = OBJECT_DEFS[self.current_object]
+        h_tiles = spec.get("height", 1)
+        h = TILE * h_tiles
+
+        obj = {
+            "type": spec["type"],
+            "x": x,
+            "y": y - h + TILE,
+            "width": TILE,
+            "height": h,
         }
 
-        file_path = filedialog.asksaveasfilename(
-            defaultextension=".json",
-            filetypes=[("JSON files", "*.json")]
+        if "slope" in spec:
+            obj["slope"] = spec["slope"]
+
+        if spec["type"] == "interactable":
+            obj["interaction"] = spec["interaction"]
+            obj["direction"] = spec["direction"]
+
+        self.push_undo()
+        self.objects.append(obj)
+        self.draw_object(obj)
+
+    def place_rect(self, x0, y0, x1, y1):
+        spec = OBJECT_DEFS[self.current_object]
+        if "slope" in spec:
+            return
+
+        self.push_undo()
+
+        x = min(x0, x1)
+        y = min(y0, y1)
+        w = abs(x1 - x0) + TILE
+        h = abs(y1 - y0) + TILE
+
+        obj = {
+            "type": spec["type"],
+            "x": x,
+            "y": y,
+            "width": w,
+            "height": h,
+        }
+
+        self.objects.append(obj)
+        self.draw_object(obj)
+
+    def place_line(self, x0, y0, x1, y1):
+        if abs(x1 - x0) >= abs(y1 - y0):
+            self.place_rect(x0, y0, x1, y0)
+        else:
+            self.place_rect(x0, y0, x0, y1)
+
+    # ========================================================
+    # Erase / Undo / Redo
+    # ========================================================
+
+    def erase_at(self, x, y):
+        item = self.canvas.find_closest(x, y)
+        if not item:
+            return
+
+        cid = item[0]
+        if cid in self.canvas_items:
+            self.push_undo()
+            obj = self.canvas_items.pop(cid)
+            self.objects.remove(obj)
+            self.canvas.delete(cid)
+
+    def undo(self):
+        if not self.undo_stack:
+            return
+        self.redo_stack.append(json.dumps(self.objects))
+        self.objects = json.loads(self.undo_stack.pop())
+        self.redraw_all()
+
+    def redo(self):
+        if not self.redo_stack:
+            return
+        self.undo_stack.append(json.dumps(self.objects))
+        self.objects = json.loads(self.redo_stack.pop())
+        self.redraw_all()
+
+    # ========================================================
+    # Drawing
+    # ========================================================
+
+    def draw_object(self, obj):
+        color = next(v["color"] for v in OBJECT_DEFS.values() if v["type"] == obj["type"])
+
+        cid = self.canvas.create_rectangle(
+            obj["x"], obj["y"],
+            obj["x"] + obj["width"],
+            obj["y"] + obj["height"],
+            fill=color,
+            outline="#ffffff"
         )
+        self.canvas_items[cid] = obj
 
-        if file_path:
-            with open(file_path, "w") as f:
-                json.dump(data, f, indent=2)
+    def redraw_all(self):
+        self.canvas.delete("all")
+        self.canvas_items.clear()
+        self.draw_grid()
+        self.draw_camera_overlay()
+        for obj in self.objects:
+            self.draw_object(obj)
 
-            messagebox.showinfo("Saved", "Level saved successfully.")
+    # ========================================================
+    # Export
+    # ========================================================
 
+    def save_json(self):
+        data = { 
+            "id": "", 
+            "debug": { 
+                "name": "", 
+                "notes": "self.level_notes_entry.get()", 
+            }, 
+            "size": {"width": MAX_WIDTH_PX, "height": MAX_HEIGHT_PX},
+
+            "playerSpawn": {
+                "x": 0, 
+                "y": 0
+            }, 
+
+            "camera": { 
+                "bounds": {"x": 0, "y": 0, "width": MAX_WIDTH_PX, "height": MAX_HEIGHT_PX},
+                "deadZone": {"width": 300, "height": 200},
+            },
+            "geometry": self.objects, 
+            
+        }
+
+        path = filedialog.asksaveasfilename(defaultextension=".json")
+        if not path:
+            return
+
+        with open(path, "w") as f:
+            json.dump(data, f, indent=2)
+
+        messagebox.showinfo("Saved", "Level saved successfully.")
+
+    def clear_level(self):
+        self.push_undo()
+        self.objects.clear()
+        self.redraw_all()
+
+
+# ============================================================
+# ENTRY
+# ============================================================
 
 if __name__ == "__main__":
     root = tk.Tk()
     root.title("Level Editor")
-
-    # Source the theme file relative to this script's directory so
-    # it works even if the working directory is different.
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    theme_path = os.path.join(script_dir, "azure.tcl")
-
-    if not os.path.exists(theme_path):
-        messagebox.showerror("Theme Error", f"azure.tcl not found at: {theme_path}")
-    else:
-        root.tk.call("source", theme_path)
-        root.tk.call("set_theme", "dark")
-
     app = LevelEditor(root)
-
-    root.update()
-    root.minsize(root.winfo_width(), root.winfo_height())
-    x_cordinate = int((root.winfo_screenwidth() / 2) - (root.winfo_width() / 2))
-    y_cordinate = int((root.winfo_screenheight() / 2) - (root.winfo_height() / 2))
-    root.geometry("+{}+{}".format(x_cordinate, y_cordinate-20))
-
     root.mainloop()

@@ -18,14 +18,15 @@ export default class Level {
     }
     
     this.color = {
-      // ground: "#1d1103",
-      // platform: "#56381a",
-      // wall: "#141110",
+      ground: "#1d1103",
+      platform: "#56381a",
+      wall: "#111111",
+      door: "#57391a",
+      ramp: "#000000",
 
       // For testing:
-      ground: "#000000",
-      platform: "#3F3F3F",
-      wall: "#111111",
+      // ground: "#000000",
+      // platform: "#3F3F3F",
     };
   }
   renderGeometry() {
@@ -37,6 +38,9 @@ export default class Level {
   }
   renderEntities() {
     this.game.entityManager.render();
+  }
+  removeInteractable(interactable) {
+    this.collision.rects = this.collision.rects.filter(r => r !== interactable);
   }
   update() {
     this.game.interaction.interactables.forEach((interactable) => {
@@ -93,6 +97,7 @@ export default class Level {
             obj.width,
             obj.height,
             obj.slope === 1 ? "up" : "down",
+            this.color.ramp,
           );
           this.collision.ramps.push(ramp);
           break;
@@ -102,6 +107,7 @@ export default class Level {
             obj.y,
             obj.width,
             obj.height,
+            this.color.door,
           );
           this.game.interaction.addInteractable(interactable, obj.interaction);
           this.collision.rects.push(interactable);
@@ -128,7 +134,7 @@ export default class Level {
       this.game,
       enemyData.spawn.x,
       enemyData.spawn.y,
-      50, // Default width
+      25, // Default width
       50  // Default height
     );
     this.game.entityManager.addEnemy(enemy);

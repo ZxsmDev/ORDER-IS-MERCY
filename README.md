@@ -377,6 +377,7 @@ Structure prioritizes **maintainability over speed**.
 | 5   | Updated Level System            | Created a more in-depth level, adjusted some ramp physics, began constructing python level editor      |
 | 6   | Refined Object Instantiation    | Trimmed and refactored object instantiation, improved and simplified collision, interaction foundation |
 | 7   | Attack Implementation & Enemies | Allowed player attacking, added enemies and adjusted gameManager declaration, interactable door        |
+| 8   | Interaction & Improved Editor   | Added UI to the door interaction, cleaned up varius redundant code, massive editor upgrade (still WIP) |
 
 ---
 

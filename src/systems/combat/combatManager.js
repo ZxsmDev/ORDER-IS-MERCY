@@ -5,7 +5,6 @@ export default class CombatManager {
     document.addEventListener("click", () => this.playerAttack());
   }
   playerAttack() {
-    console.log("Player attacks!");
     if (this.game.player) {
       this.game.player.attack();
     }

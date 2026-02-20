@@ -2,6 +2,7 @@ export default class Interaction {
   constructor(gameManager) {
     this.game = gameManager;
     this.interactables = [];
+    this.hover = null; // { text, worldX, worldY, interactable }
   }
   addInteractable(interactable, interactionType) {
     this.interactables.push({ interactable, interactionType });
@@ -9,18 +10,49 @@ export default class Interaction {
   update() {
     const player = this.game.player;
 
+    // Reset hover each frame; render will draw it in the UI pass
+    this.hover = null;
+
     this.interactables.forEach(({ interactable, interactionType }) => {
       if (
-        this.game.collision.checkCollision(
-          player,
-          interactable,
-          "radial",
-          50
-        ) &&
-        this.game.input.isPressed("KeyE")
+        this.game.collision.checkCollision(player, interactable, "radial", 75)
       ) {
-        interactable.action(interactionType);
+        // Store hover data (world coordinates). Render will convert to screen coords.
+        if (!interactable.interacted) {
+          this.hover = {
+            text: "[E] to interact",
+            worldX: interactable.x + interactable.width * 1.5,
+            worldY: interactable.y + interactable.height / 3,
+            interactable,
+          };
+        }
+
+        if (this.game.input.isPressed("KeyE")) {
+          interactable.action(interactionType);
+          this.game.level.removeInteractable(interactable);
+        }
       }
     });
+  }
+
+  render() {
+    if (!this.hover) return;
+    const ctx = this.game.ctx;
+    const cam = this.game.camera;
+
+    // Convert world -> screen coords since UI render happens after camera transform reset
+    const screenX = this.hover.worldX - cam.x;
+    const screenY = this.hover.worldY - cam.y;
+
+    ctx.fillStyle = "rgba(0,0,0,0.6)";
+    ctx.fillRect(
+      screenX - 6,
+      screenY - 18,
+      ctx.measureText(this.hover.text).width + 12,
+      22,
+    );
+    ctx.fillStyle = "white";
+    ctx.font = "16px Arial";
+    ctx.fillText(this.hover.text, screenX, screenY);
   }
 }

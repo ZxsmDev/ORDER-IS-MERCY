@@ -2,23 +2,23 @@
   "id": "structured_test_facility",
   "size": { "width": 8000, "height": 3500 },
 
-  "playerSpawn": { "x": 500, "y": 3000 },
+  "playerSpawn": { "x": 500, "y": 3250 },
 
   "enemies": [
     {
       "type": "basic",
-      "spawn": { "x": 700, "y": 3000 },
+      "spawn": { "x": 700, "y": 3250 },
       "patrolPath": [
-        { "x": 700, "y": 3000 },
-        { "x": 900, "y": 3000 }
+        { "x": 700, "y": 3250 },
+        { "x": 900, "y": 3250 }
       ]
     },
     {
       "type": "basic",
-      "spawn": { "x": 2000, "y": 3000 },
+      "spawn": { "x": 2000, "y": 3250 },
       "patrolPath": [
-        { "x": 2000, "y": 3000 },
-        { "x": 2200, "y": 3000 }
+        { "x": 2000, "y": 3250 },
+        { "x": 2200, "y": 3250 }
       ]
     }
   ],
@@ -35,8 +35,9 @@
       "type": "interactable",
       "x": 0,
       "y": 3200,
-      "width": 50,
+      "width": 25,
       "height": 100,
+      "direction": "left",
       "interaction": "door"
     },
     { "type": "wall", "x": 7950, "y": 0, "width": 50, "height": 3200 },
@@ -48,13 +49,32 @@
     { "type": "platform", "x": 1400, "y": 2650, "width": 300, "height": 25 },
     { "type": "platform", "x": 400, "y": 2650, "width": 300, "height": 25 },
 
-    { "type": "wall", "x": 1900, "y": 1200, "width": 50, "height": 2000 },
-    { "type": "wall", "x": 2200, "y": 1200, "width": 50, "height": 2000 },
+    { "type": "wall", "x": 1900, "y": 2000, "width": 50, "height": 1200 },
+    {
+      "type": "interactable",
+      "x": 1925,
+      "y": 3200,
+      "width": 25,
+      "height": 100,
+      "direction": "right",
+      "interaction": "door"
+    },
+    { "type": "wall", "x": 2200, "y": 2000, "width": 50, "height": 1200 },
+    {
+      "type": "interactable",
+      "x": 2200,
+      "y": 3200,
+      "width": 25,
+      "height": 100,
+      "direction": "right",
+      "interaction": "door"
+    },
 
     { "type": "platform", "x": 1950, "y": 3100, "width": 200, "height": 25 },
     { "type": "platform", "x": 2000, "y": 2900, "width": 200, "height": 25 },
     { "type": "platform", "x": 1950, "y": 2700, "width": 200, "height": 25 },
     { "type": "platform", "x": 2000, "y": 2500, "width": 200, "height": 25 },
+    { "type": "platform", "x": 1950, "y": 2300, "width": 200, "height": 25 },
 
     { "type": "wall", "x": 2600, "y": 3150, "width": 50, "height": 150 },
     { "type": "wall", "x": 3050, "y": 3150, "width": 50, "height": 150 },

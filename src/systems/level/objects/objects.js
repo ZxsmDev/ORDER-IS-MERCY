@@ -13,12 +13,13 @@ export class Rect {
 }
 
 export class Ramp {
-  constructor(x, y, width, height, direction) {
+  constructor(x, y, width, height, direction, color) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
     this.direction = direction; // "up" or "down"
+    this.color = color
   }
   getYAtX(x) {
     const relativeX = x - this.x;
@@ -27,8 +28,8 @@ export class Ramp {
       ? this.y + this.height - slope * relativeX
       : this.y + slope * relativeX;
   }
-  render(ctx, color = "rgb(25, 25, 25)") {
-    ctx.fillStyle = color;
+  render(ctx) {
+    ctx.fillStyle = this.color;
     ctx.beginPath();
     if (this.direction === "up") {
       ctx.moveTo(this.x, this.y + this.height);
@@ -75,28 +76,32 @@ export class Polygon {
 }
 
 export class Interactable {
-  constructor(x, y, width, height) {
+  constructor(x, y, width, height, color) {
     this.x = x; // Center the interactable for radial collision
     this.y = y;
     this.width = width;
     this.height = height;
+    this.color = color;
 
     this.interacted = false; // Track if the interactable has been interacted with
   }
-  render(ctx, color = "rgb(0, 200, 100)") {
-    ctx.fillStyle = color;
+  render(ctx) {
+    ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.width, this.height);
   }
   update() {
-    if (this.interacted && this.width > 0) {
+    if (this.width <= 0) {
+      // Example of removing the interactable after interaction
+      this.interacted = true;
+      return;
+    }
+    if (this.interacted) {
       this.width -= 5; // Example of changing the interactable after interaction
     }
   }
   action(type) {
     switch (type) {
       case "door":
-        console.log("The door opens!");
-
         this.interacted = true; // Mark as interacted
         break;
       default:

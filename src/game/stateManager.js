@@ -5,11 +5,16 @@ export default class StateManager {
       menu: {
         name: "MENU",
         update: () => {
-          // Update menu state
+          const startButton = document.getElementById("startButton");
+          const menu = document.querySelector("section#menu");
+          if (startButton) {
+            startButton.addEventListener("click", () => {
+              this.changeState(this.states.game);
+              menu.style.display = "none";
+            });
+          }
         },
-        render: () => {
-          // Render menu state
-        },
+        render: () => {},
       },
       game: {
         name: "RUNNING",

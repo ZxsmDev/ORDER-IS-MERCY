@@ -378,6 +378,7 @@ Structure prioritizes **maintainability over speed**.
 | 6   | Refined Object Instantiation    | Trimmed and refactored object instantiation, improved and simplified collision, interaction foundation |
 | 7   | Attack Implementation & Enemies | Allowed player attacking, added enemies and adjusted gameManager declaration, interactable door        |
 | 8   | Interaction & Improved Editor   | Added UI to the door interaction, cleaned up varius redundant code, massive editor upgrade (still WIP) |
+| 9   | Main Menu & Editor Change       | Converted editor into HTML/JS for ease of use, added main menu, began working on level swapping        |
 
 ---
 

@@ -1,3 +1,6 @@
+import testLevel00 from "../systems/level/data/levelTest00.json" with { type: "json" };
+import testLevel01 from "../systems/level/data/levelTest01.json" with { type: "json" };
+
 export default class GameManager {
   constructor(
     canvas, // HTMLCanvasElement
@@ -14,7 +17,7 @@ export default class GameManager {
     LevelClass, // Level class, represents the current level, holds level data and geometry, handles level-specific logic
     Interaction, // Interaction system, handles player interactions with the environment and entities
     Camera, // Camera system, handles view transformations, follows player, and manages rendering offsets
-    UserInterface // User interface system, handles UI elements, HUD, and player feedback
+    UserInterface, // User interface system, handles UI elements, HUD, and player feedback
   ) {
     // Canvas and Context
     this.canvas = canvas;
@@ -59,16 +62,30 @@ export default class GameManager {
     this.delta = null;
   }
   init() {
-    this.level.load();
+    // In gameManager.js init(), before line 76:
+    this.level.load(1); // Load first level by default
+
+    if (this.stateManager.current.name == "MENU") {
+      const levelSelect = document.getElementById("levelSelect");
+      if (levelSelect) {
+        levelSelect.addEventListener("change", (e) => {
+          const selectedLevel = e.target.value;
+          this.level.load(selectedLevel);
+        });
+      }
+    }
 
     // Initialize the player after level data is loaded
-    const playerSpawn = this.level.data.playerSpawn; // Access player spawn data from the level
+    const spawn = this.level.data.geometry.find(
+      (obj) => obj.type === "playerSpawn",
+    );
+
     this.player = new this.PlayerClass(
       this,
-      playerSpawn.x,
-      playerSpawn.y,
+      spawn.x * this.level.scaleFactor,
+      spawn.y * this.level.scaleFactor,
       25, // Default width
-      50 // Default height
+      50, // Default height
     );
 
     this.entityManager.entities.push(this.player);
@@ -77,7 +94,7 @@ export default class GameManager {
 
     this.ctx.fillStyle = "black";
     this.ctx.font = "16px Arial";
-    this.stateManager.changeState(this.stateManager.states.game);
+    this.stateManager.changeState(this.stateManager.states.menu);
     this.gameLoop.start();
   }
   resizeCanvas() {

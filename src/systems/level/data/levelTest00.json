@@ -2,14 +2,17 @@
   "id": "0",
   "size": { "width": 3200, "height": 1800 },
 
-  "playerSpawn": { "x": 200, "y": 1400 },
-
   "camera": {
     "bounds": { "x": 0, "y": 0, "width": 3200, "height": 1800 },
     "deadZone": { "width": 300, "height": 200 }
   },
 
   "geometry": [
+    {
+      "type": "playerSpawn",
+      "x": 200,
+      "y": 1400
+    },
     {
       "type": "ground",
       "x": 0,

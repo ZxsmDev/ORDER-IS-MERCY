@@ -1,14 +1,10 @@
 Todo:
+  - implement account/login for admin use of level editor 
+  - other states then game
   - adjust ramp collision trajectory
-  - change level collision object sweeps to check all object types (rect, ramp, radial, hazard)
   - allow smooth descent down ramp
-  - unique interactable objects (doors, buttons) that communicate with the player
   - ramp gap collision detection
   - level instance swapping
   - level graph mapping and swapping
   - improved use of HUD
   - hazard implementation into collision (player hurtbox)
-
-Potential Additions: 
-  - level translator, given a level grid I can specify a size and choose what objects to place in each cell using a 
-    predetermined list of object types which is then translated into json and converted into a level (started)

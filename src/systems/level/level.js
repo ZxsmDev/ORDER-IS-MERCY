@@ -1,12 +1,18 @@
 import testLevel00 from "./data/levelTest00.json" with { type: "json" };
 import testLevel01 from "./data/levelTest01.json" with { type: "json" };
-import { Rect, Ramp, Radial, Polygon, Interactable } from "./objects/objects.js";
+import {
+  Rect,
+  Ramp,
+  Radial,
+  Polygon,
+  Interactable,
+} from "./objects/objects.js";
 import EnemyClass from "../entities/enemy.js";
 
 export default class Level {
   constructor(gameManager) {
     this.game = gameManager;
-    this.levelIndex = 0;
+    this.levels = [testLevel00, testLevel01];
     this.data = null;
     this.geometry = [];
     this.enemies = [];
@@ -15,8 +21,8 @@ export default class Level {
       ramps: [],
       radial: [],
       poly: [],
-    }
-    
+    };
+
     this.color = {
       ground: "#1d1103",
       platform: "#56381a",
@@ -28,6 +34,17 @@ export default class Level {
       // ground: "#000000",
       // platform: "#3F3F3F",
     };
+
+    /* Global level scale factor to convert from level units to 
+    pixels, need to determine factors for other sizes */
+
+    // this.scaleFactor = {
+    //   small: ?,
+    //   medium: ?,
+    //   large: 2,
+    //   xl: ?,
+    // };
+    this.scaleFactor = 1; // TEMP
   }
   renderGeometry() {
     Object.values(this.collision).forEach((group) => {
@@ -40,7 +57,9 @@ export default class Level {
     this.game.entityManager.render();
   }
   removeInteractable(interactable) {
-    this.collision.rects = this.collision.rects.filter(r => r !== interactable);
+    this.collision.rects = this.collision.rects.filter(
+      (r) => r !== interactable,
+    );
   }
   update() {
     this.game.interaction.interactables.forEach((interactable) => {
@@ -48,54 +67,50 @@ export default class Level {
     });
     this.game.entityManager.update();
   }
-  load() {
-    // Load level data from JSON
-    const level0 = testLevel00;
-    const level1 = testLevel01;
-    this.data = level1;
-    this.geometry = level1.geometry;
-    this.enemies = level1.enemies;
-
+  load(index) {
+    this.data = this.levels[index];
+    this.geometry = this.data.geometry;
+    this.enemies = this.data.enemies;
 
     // Create collision rectangles from geometry
     this.geometry.forEach((obj) => {
       switch (obj.type) {
         case "ground":
           const groundRect = new Rect(
-            obj.x,
-            obj.y,
-            obj.width,
-            obj.height,
+            obj.x * this.scaleFactor,
+            obj.y * this.scaleFactor,
+            obj.width * this.scaleFactor,
+            obj.height * this.scaleFactor,
             this.color.ground,
           );
           this.collision.rects.push(groundRect);
           break;
         case "platform":
           const platformRect = new Rect(
-            obj.x,
-            obj.y,
-            obj.width,
-            obj.height,
+            obj.x * this.scaleFactor,
+            obj.y * this.scaleFactor,
+            obj.width * this.scaleFactor,
+            obj.height * this.scaleFactor / 2,
             this.color.platform,
           );
           this.collision.rects.push(platformRect);
           break;
         case "wall":
           const wallRect = new Rect(
-            obj.x,
-            obj.y,
-            obj.width,
-            obj.height,
+            obj.x * this.scaleFactor,
+            obj.y * this.scaleFactor,
+            obj.width * this.scaleFactor,
+            obj.height * this.scaleFactor,
             this.color.wall,
           );
           this.collision.rects.push(wallRect);
           break;
         case "ramp":
           const ramp = new Ramp(
-            obj.x,
-            obj.y,
-            obj.width,
-            obj.height,
+            obj.x * this.scaleFactor,
+            obj.y * this.scaleFactor,
+            obj.width * this.scaleFactor,
+            obj.height * this.scaleFactor,
             obj.slope === 1 ? "up" : "down",
             this.color.ramp,
           );
@@ -103,10 +118,10 @@ export default class Level {
           break;
         case "interactable":
           const interactable = new Interactable(
-            obj.x,
-            obj.y,
-            obj.width,
-            obj.height,
+            obj.x * this.scaleFactor,
+            obj.y * this.scaleFactor,
+            obj.width * this.scaleFactor,
+            obj.height * this.scaleFactor,
             this.color.door,
           );
           this.game.interaction.addInteractable(interactable, obj.interaction);
@@ -114,8 +129,8 @@ export default class Level {
           break;
         case "radial":
           const radial = new Radial(
-            obj.x,
-            obj.y,
+            obj.x * this.scaleFactor,
+            obj.y * this.scaleFactor,
             obj.radius,
             obj.color || "#FF0000",
           );
@@ -125,18 +140,19 @@ export default class Level {
           const polygon = new Polygon(obj.points, obj.color || "#00FF00");
           // this.collision.poly.push(polygon);
           break;
-        
       }
     });
 
+    if (!this.enemies) return;
     this.enemies.forEach((enemyData) => {
-    const enemy = new EnemyClass(
-      this.game,
-      enemyData.spawn.x,
-      enemyData.spawn.y,
-      25, // Default width
-      50  // Default height
-    );
-    this.game.entityManager.addEnemy(enemy);
-  });}
+      const enemy = new EnemyClass(
+        this.game,
+        enemyData.spawn.x * this.scaleFactor,
+        enemyData.spawn.y * this.scaleFactor,
+        25, // Default width
+        50, // Default height
+      );
+      this.game.entityManager.addEnemy(enemy);
+    });
+  }
 }

@@ -2,8 +2,6 @@
   "id": "structured_test_facility",
   "size": { "width": 8000, "height": 3500 },
 
-  "playerSpawn": { "x": 500, "y": 3250 },
-
   "enemies": [
     {
       "type": "basic",
@@ -29,11 +27,12 @@
   },
 
   "geometry": [
+    { "type": "playerSpawn", "x": 500, "y": 3250 },
     { "type": "ground", "x": 0, "y": 3300, "width": 8000, "height": 200 },
     { "type": "wall", "x": 0, "y": 0, "width": 50, "height": 3200 },
     {
       "type": "interactable",
-      "x": 0,
+      "x": 0, 
       "y": 3200,
       "width": 25,
       "height": 100,
